@@ -18,7 +18,7 @@ class Grafo:
     def mostrarArestas(self):
         print("Mostrando todas as arestas")
         for aresta in self.arestas:
-            print(f"{aresta}")
+            print(f"teste{aresta}")
         print("Fim mostrando todas as arestas\n")
 
 
@@ -84,13 +84,14 @@ class GrafoNaoDirecionado(Grafo):
 
 ###########################################################################################################
 class GrafoDirecionado(Grafo):
-    def adicionarAresta(self, origem, destino, peso = 1):
+    def adicionarAresta(self, origem, destino, peso=1):
         if origem in self.grafo and destino in self.grafo:
-            self.grafo[origem].append(destino, peso)
+            self.grafo[origem].append((destino, peso))  # Corrigido: passando tupla (destino, peso)
             self.arestas.append((origem, destino, peso))
 
     def removerAresta(self, origem, destino):
         if origem in self.grafo and destino in self.grafo:
             self.grafo[origem] = [(v, p) for v, p in self.grafo[origem] if v != destino]
+
 ###########################################################################################################
 
