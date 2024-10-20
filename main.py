@@ -1,6 +1,7 @@
 from grafo import *
 from grafoFuncoes import *
 
+
 ###Script principal
 # print("")
 # print("ESSA É A BIBLIOTECA DE MANIPULAÇÃO DE GRAFOS")
@@ -27,6 +28,15 @@ grafoNDir.mostrarMatrizAdjacencia();
 grafoNDir.mostrarMatrizIncidencia();
 grafoNDir.mostrarArestas();
 # print("________________________________");
+
+
+
+# Exemplo para criar um grafo direcionado
+grafoDir = GrafoDirecionado()
+criarGrafoDirecionado(grafoDir)
+grafoDir.mostrarMatrizAdjacencia()
+grafoDir.mostrarArestas()
+
 # print("Aqui começa o grafo direcionado");
 # grafoDir = GrafoDirecionado();
 # grafoDir.adicionarVertice("Belo Horizonte");

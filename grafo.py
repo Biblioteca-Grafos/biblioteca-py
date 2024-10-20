@@ -18,7 +18,7 @@ class Grafo:
     def mostrarArestas(self):
         print("Mostrando todas as arestas")
         for aresta in self.arestas:
-            print(f"teste{aresta}")
+            print(f"{aresta}")
         print("Fim mostrando todas as arestas\n")
 
 
