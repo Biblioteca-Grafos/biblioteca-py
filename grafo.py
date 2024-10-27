@@ -95,6 +95,27 @@ class GrafoNaoDirecionado(Grafo):
         else:
             print(f"{vertice1} e {vertice2} NÃO estão adjacentes.")
 
+
+    def verificarAdjacenciaEntreArestas(self):
+        """Verifica a adjacência entre todas as arestas do grafo."""
+        print("Verificando adjacência entre as arestas:")
+        for i in range(len(self.arestas)):
+            v1_1, v1_2, peso1 = self.arestas[i]
+            for j in range(i + 1, len(self.arestas)):  # Evitar comparações duplicadas
+                v2_1, v2_2, peso2 = self.arestas[j]
+                
+                # Verifica se as arestas compartilham pelo menos um vértice
+                if (v1_1 == v2_1 or v1_1 == v2_2 or 
+                    v1_2 == v2_1 or v1_2 == v2_2):
+                    print(
+                        f"Aresta ({v1_1} - {v1_2}, peso {peso1}) "
+                        f"está adjacente à aresta ({v2_1} - {v2_2}, peso {peso2})."
+                    )
+                else:
+                    print(
+                        f"Aresta ({v1_1} - {v1_2}, peso {peso1}) "
+                        f"NÃO está adjacente à aresta ({v2_1} - {v2_2}, peso {peso2})."
+                    )
  ###########################################################################################################
 
 ###########################################################################################################           
@@ -114,10 +135,13 @@ class GrafoDirecionado(Grafo):
         if vertice1 in self.grafo and vertice2 in self.grafo:
             return any(v == vertice2 for v, _ in self.grafo[vertice1])
         return False
-
+    
+    
+  
     def verificarAdjacencia(self):
         vertices = list(self.grafo.keys())
-        print("Verificando adjacência entre os vértices:")
+        print("\n---------------------------------------------------------------------------------------")
+        print("Verificando adjacência entre os vértices no grafo direcionado:")
         for i in range(len(vertices)):
             for j in range(len(vertices)):
                 if i != j:  # Não verificar a adjacência de um vértice consigo mesmo
@@ -127,12 +151,32 @@ class GrafoDirecionado(Grafo):
                         print(f"{vertice1} e {vertice2} estão adjacentes.")
                     else:
                         print(f"{vertice1} e {vertice2} NÃO estão adjacentes.")
-
       
+
+
+    def estaoAdjacentesArestas(self, aresta1, aresta2):
+        """Verifica se duas arestas estão adjacentes."""
+        origem1, destino1, _ = aresta1
+        origem2, destino2, _ = aresta2
+
+        # A aresta1 é adjacente à aresta2 se o destino da primeira for a origem da segunda
+        return destino1 == origem2
+
+    def verificarAdjacenciaEntreArestas(self):
+        """Verifica a adjacência entre todas as arestas do grafo."""
+        print("\n---------------------------------------------------------------------------------------")
+        print("Verificando adjacência entre as arestas:")
+        for i in range(len(self.arestas)):
+            for j in range(i + 1, len(self.arestas)):
+                aresta1 = self.arestas[i]
+                aresta2 = self.arestas[j]
+
+                if self.estaoAdjacentesArestas(aresta1, aresta2):
+                    print(f"Aresta {aresta1} está adjacente à aresta {aresta2}.")
+                else:
+                    print(f"Aresta {aresta1} NÃO está adjacente à aresta {aresta2}.")
+                   
 ###########################################################################################################
 ###########################################################################################################
 
 
-
-###########################################################################################################
-###########################################################################################################

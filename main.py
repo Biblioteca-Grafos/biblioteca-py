@@ -32,7 +32,7 @@ print("Verificando adjacência no grafo não direcionado")
 pares_de_vertices = [("A", "B"), ("B", "C"), ("A", "C")]
 for vertice1, vertice2 in pares_de_vertices:
     grafoNDir.verificarAdjacencia(vertice1, vertice2)
-
+grafoNDir.verificarAdjacenciaEntreArestas()
 
 
 # Exemplo para criar um grafo direcionado
@@ -40,8 +40,9 @@ grafoDir = GrafoDirecionado()
 criarGrafoDirecionado(grafoDir)
 grafoDir.mostrarMatrizAdjacencia()
 grafoDir.mostrarArestas()
-print("Verificando adjacência no grafo direcionado")
 grafoDir.verificarAdjacencia()
+grafoDir.verificarAdjacenciaEntreArestas()
+
 
 # print("Aqui começa o grafo direcionado");
 # grafoDir = GrafoDirecionado();
