@@ -64,6 +64,8 @@ class Grafo:
             linha = [str(minhaMatriz[i][j]) for j in range(quantArestas)]
             print(f"{listaVertices[i]} " + " ".join(linha))
         print("Fim representando Grafo com Matriz de Incidencia\n")
+
+ 
 ###########################################################################################################
 
 
@@ -80,9 +82,22 @@ class GrafoNaoDirecionado(Grafo):
             self.grafo[vertice1] = [(v, p) for v, p in self.grafo[vertice1] if v != vertice2]
             self.grafo[vertice2] = [(v, p) for v, p in self.grafo[vertice2] if v != vertice1]
             self.arestas = [(v1, v2, p) for v1, v2, p in self.arestas if (v1, v2) != (vertice1, vertice2) and (v2, v1) != (vertice1, vertice2)]
-###########################################################################################################
 
-###########################################################################################################
+   # Checagem de adjacência
+    def estaoAdjacentes(self, vertice1, vertice2):
+        if vertice1 in self.grafo and vertice2 in self.grafo:
+            return any(v == vertice2 for v, _ in self.grafo[vertice1])
+        return False
+
+    def verificarAdjacencia(self, vertice1, vertice2):
+        if self.estaoAdjacentes(vertice1, vertice2):
+            print(f"{vertice1} e {vertice2} estão adjacentes.")
+        else:
+            print(f"{vertice1} e {vertice2} NÃO estão adjacentes.")
+
+ ###########################################################################################################
+
+###########################################################################################################           
 class GrafoDirecionado(Grafo):
     def adicionarAresta(self, origem, destino, peso=1):
         if origem in self.grafo and destino in self.grafo:
@@ -93,5 +108,31 @@ class GrafoDirecionado(Grafo):
         if origem in self.grafo and destino in self.grafo:
             self.grafo[origem] = [(v, p) for v, p in self.grafo[origem] if v != destino]
 
+
+   
+    def estaoAdjacentes(self, vertice1, vertice2):
+        if vertice1 in self.grafo and vertice2 in self.grafo:
+            return any(v == vertice2 for v, _ in self.grafo[vertice1])
+        return False
+
+    def verificarAdjacencia(self):
+        vertices = list(self.grafo.keys())
+        print("Verificando adjacência entre os vértices:")
+        for i in range(len(vertices)):
+            for j in range(len(vertices)):
+                if i != j:  # Não verificar a adjacência de um vértice consigo mesmo
+                    vertice1 = vertices[i]
+                    vertice2 = vertices[j]
+                    if self.estaoAdjacentes(vertice1, vertice2):
+                        print(f"{vertice1} e {vertice2} estão adjacentes.")
+                    else:
+                        print(f"{vertice1} e {vertice2} NÃO estão adjacentes.")
+
+      
+###########################################################################################################
 ###########################################################################################################
 
+
+
+###########################################################################################################
+###########################################################################################################

@@ -81,3 +81,4 @@ def criarGrafoDirecionado(grafo):
         grafo.adicionarAresta(inputOrigem, inputDestino, peso)
 
         print(f"Aresta direcionada adicionada de {inputOrigem} para {inputDestino} com peso {peso}.\n")
+
