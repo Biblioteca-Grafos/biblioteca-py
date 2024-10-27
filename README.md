@@ -31,7 +31,7 @@ Funções básicas para manipulação de grafos em ambas representações, inclu
 | Ponderação e rotulação de vértices |  |
 | Ponderação e rotulação de arestas  |   |
 | Checagem de adjacência entre vértices |  Sim |
-| Checagem de adjacência entre arestas|  |
+| Checagem de adjacência entre arestas| Sim |
 |Checagem da existência de arestas  |   |
 | Checagem da quantidade de vértices e arestas |   |
 | Checagem de grafo vazio e completo |  |
