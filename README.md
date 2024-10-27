@@ -16,9 +16,9 @@ Representações
 
  | Representação de grafos | Feito |
 | ------------- | ------------- |
-| Matriz de Adjacência  |   |
-| Matriz de Incidência |   |
-| Lista de Adjacência |  |
+| Matriz de Adjacência  | Sim  |
+| Matriz de Incidência | Sim  |
+| Lista de Adjacência | Sim |
 
 Manipulação
 Funções básicas para manipulação de grafos em ambas representações, incluindo:
@@ -26,11 +26,11 @@ Funções básicas para manipulação de grafos em ambas representações, inclu
 
  | Representação de grafos | Feito |
 | ------------- | ------------- |
-| Criação de um grafo com X vértices (o número de vértices deve ser inserido pelo usuário)  |   |
+| Criação de um grafo com X vértices (o número de vértices deve ser inserido pelo usuário)  | Sim  |
 | Criação e remoção de arestas |   |
 | Ponderação e rotulação de vértices |  |
 | Ponderação e rotulação de arestas  |   |
-| Checagem de adjacência entre vértices |   |
+| Checagem de adjacência entre vértices |  Sim |
 | Checagem de adjacência entre arestas|  |
 |Checagem da existência de arestas  |   |
 | Checagem da quantidade de vértices e arestas |   |
