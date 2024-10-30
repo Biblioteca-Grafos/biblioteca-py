@@ -37,12 +37,22 @@ grafoNDir.verificarAdjacenciaEntreArestas()
 
 # Exemplo para criar um grafo direcionado
 grafoDir = GrafoDirecionado()
-criarGrafoDirecionado(grafoDir)
+# criarGrafoDirecionado(grafoDir)]
+grafoDir.adicionarVertice("A");
+grafoDir.adicionarVertice("B");
+grafoDir.adicionarVertice("C");
+grafoDir.adicionarAresta("A","B", 33);
+grafoDir.adicionarAresta("A", "B", 33) # Não será adicionada novamente
+grafoDir.adicionarAresta("B","C", 33);
+
 grafoDir.mostrarMatrizAdjacencia()
 grafoDir.mostrarArestas()
 grafoDir.verificarAdjacencia()
 grafoDir.verificarAdjacenciaEntreArestas()
-
+grafoDir.existeAresta("A","C")
+grafoDir.existeAresta("A","B")
+grafoDir.quantidadeVertices()
+grafoDir.quantidadeArestas()
 
 # print("Aqui começa o grafo direcionado");
 # grafoDir = GrafoDirecionado();

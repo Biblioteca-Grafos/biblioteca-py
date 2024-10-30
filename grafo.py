@@ -179,4 +179,38 @@ class GrafoDirecionado(Grafo):
 ###########################################################################################################
 ###########################################################################################################
 
+    def adicionarAresta(self, origem, destino, peso=1):
+        # Verifica automaticamente se a aresta já existe
+        if self.existeAresta(origem, destino):
+            print(f"Aresta de {origem} para {destino} já existe! Ação ignorada.")
+            return
 
+        if origem in self.grafo and destino in self.grafo:
+            self.grafo[origem].append((destino, peso))
+            self.arestas.append((origem, destino, peso))
+            print(f"Aresta direcionada adicionada de {origem} para {destino} com peso {peso}.")
+
+    def existeAresta(self, origem, destino):
+        """Verifica se existe uma aresta de origem para destino."""
+        print("\n---------------------------------------------------------------------------------------")
+        print("Verificando existencia entre as arestas:")
+
+        if origem in self.grafo and destino in self.grafo:
+            for v, _ in self.grafo[origem]:
+                if v == destino:
+                    return print(f"Existe aresta entre {origem} para {destino}")
+        return print(f"Não existe aresta entre {origem} para {destino}")
+
+###########################################################################################################
+###########################################################################################################
+
+
+    def quantidadeVertices(self):
+        """Retorna a quantidade de vértices no grafo."""
+        print(f"A quantidade de vértices no grafo é de: {len(self.grafo)}")
+        # return len(self.grafo)
+
+    def quantidadeArestas(self):
+        """Retorna a quantidade de arestas no grafo."""
+        print(f"A quantidade de arestas no grafo é de: {len(self.arestas)}")
+        # return len(self.arestas)
