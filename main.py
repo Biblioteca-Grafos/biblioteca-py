@@ -34,6 +34,11 @@ for vertice1, vertice2 in pares_de_vertices:
     grafoNDir.verificarAdjacencia(vertice1, vertice2)
 grafoNDir.verificarAdjacenciaEntreArestas()
 
+grafoNDir.existeAresta("A","C")
+grafoNDir.existeAresta("A","B")
+grafoNDir.existeAresta("B","A")
+grafoNDir.quantidadeVertices()
+grafoNDir.quantidadeArestas()
 
 # Exemplo para criar um grafo direcionado
 grafoDir = GrafoDirecionado()
@@ -50,7 +55,9 @@ grafoDir.mostrarArestas()
 grafoDir.verificarAdjacencia()
 grafoDir.verificarAdjacenciaEntreArestas()
 grafoDir.existeAresta("A","C")
+grafoDir.existeAresta("C","A")
 grafoDir.existeAresta("A","B")
+grafoDir.existeAresta("B","A")
 grafoDir.quantidadeVertices()
 grafoDir.quantidadeArestas()
 

@@ -116,6 +116,47 @@ class GrafoNaoDirecionado(Grafo):
                         f"Aresta ({v1_1} - {v1_2}, peso {peso1}) "
                         f"NÃO está adjacente à aresta ({v2_1} - {v2_2}, peso {peso2})."
                     )
+
+                    ###########################################################################################################
+###########################################################################################################
+
+    def adicionarAresta(self, origem, destino, peso=1):
+        # Verifica automaticamente se a aresta já existe
+        if self.existeAresta(origem, destino):
+            print(f"Aresta de {origem} para {destino} já existe! Ação ignorada.")
+            return
+
+        if origem in self.grafo and destino in self.grafo:
+            self.grafo[origem].append((destino, peso))
+            self.arestas.append((origem, destino, peso))
+            print(f"Aresta direcionada adicionada de {origem} para {destino} com peso {peso}.")
+
+    def existeAresta(self, origem, destino):
+        """Verifica se existe uma aresta de origem para destino."""
+        print("\n---------------------------------------------------------------------------------------")
+        print("Verificando existencia entre as arestas:")
+
+        if origem in self.grafo and destino in self.grafo:
+            for v, _ in self.grafo[origem]:
+                if v == destino:
+                    return print(f"Existe aresta entre {origem} para {destino}")
+        return print(f"Não existe aresta entre {origem} para {destino}")
+
+###########################################################################################################
+###########################################################################################################
+
+    def quantidadeVertices(self):
+        print("\n---------------------------------------------------------------------------------------")
+        """Retorna a quantidade de vértices no grafo."""
+        print(f"A quantidade de vértices no grafo é de: {len(self.grafo)}")
+        # return len(self.grafo)
+
+    def quantidadeArestas(self):
+        print("\n---------------------------------------------------------------------------------------")
+        """Retorna a quantidade de arestas no grafo."""
+        print(f"A quantidade de arestas no grafo é de: {len(self.arestas)}")
+        # return len(self.arestas)
+
  ###########################################################################################################
 
 ###########################################################################################################           
@@ -199,18 +240,27 @@ class GrafoDirecionado(Grafo):
             for v, _ in self.grafo[origem]:
                 if v == destino:
                     return print(f"Existe aresta entre {origem} para {destino}")
+                
+        if destino in self.grafo and origem in self.grafo:
+            for v, _ in self.grafo[destino]:
+                if v == origem:
+                    return print(f"Existe aresta entre {origem} para {destino}")
         return print(f"Não existe aresta entre {origem} para {destino}")
 
 ###########################################################################################################
 ###########################################################################################################
 
-
     def quantidadeVertices(self):
+        print("\n---------------------------------------------------------------------------------------")
         """Retorna a quantidade de vértices no grafo."""
         print(f"A quantidade de vértices no grafo é de: {len(self.grafo)}")
         # return len(self.grafo)
 
     def quantidadeArestas(self):
+        print("\n---------------------------------------------------------------------------------------")
         """Retorna a quantidade de arestas no grafo."""
         print(f"A quantidade de arestas no grafo é de: {len(self.arestas)}")
         # return len(self.arestas)
+
+###########################################################################################################
+###########################################################################################################
