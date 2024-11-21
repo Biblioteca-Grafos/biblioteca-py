@@ -65,17 +65,29 @@ class Grafo:
             print(f"{listaVertices[i]} " + " ".join(linha))
         print("Fim representando Grafo com Matriz de Incidencia\n")
 
+##verificar se é um grafo vazio
+    def checarGrafoVazio(self):
+        print("\n---------------------------------------------------------------------------------------")
+        print("Checando se o grafo é vazio:");
+        
+        if not self.grafo or all(not arestas for arestas in self.grafo.values()):
+            print("O grafo está vazio.");
+            return True
+        
+        print("O grafo não está vazio.");
+        return False
+
  
 ###########################################################################################################
 
 
 ###########################################################################################################
 class GrafoNaoDirecionado(Grafo):
-    def adicionarAresta(self, vertice1, vertice2, peso = 1):
-        if vertice1 in self.grafo and vertice2 in self.grafo:
-            self.grafo[vertice1].append((vertice2, peso))
-            self.grafo[vertice2].append((vertice1, peso))
-            self.arestas.append((vertice1, vertice2, peso))
+    # def adicionarAresta(self, vertice1, vertice2, peso = 1):
+    #     if vertice1 in self.grafo and vertice2 in self.grafo:
+    #         self.grafo[vertice1].append((vertice2, peso))
+    #         self.grafo[vertice2].append((vertice1, peso))
+    #         self.arestas.append((vertice1, vertice2, peso))
 
     def removerAresta(self, vertice1, vertice2):
         if vertice1 in self.grafo and vertice2 in self.grafo:
@@ -120,16 +132,39 @@ class GrafoNaoDirecionado(Grafo):
                     ###########################################################################################################
 ###########################################################################################################
 
-    def adicionarAresta(self, origem, destino, peso=1):
+    def adicionarAresta(self, origem, destino, peso = 1):
+        if origem == destino:
+            print(f"Não é permitido adicionar uma aresta de {origem} para {destino} (laço).")
+            return
+    
         # Verifica automaticamente se a aresta já existe
         if self.existeAresta(origem, destino):
             print(f"Aresta de {origem} para {destino} já existe! Ação ignorada.")
+            # Atualiza pesos caso sejam diferentes do que foi informado anteriormente, atualizando os vértices e suas relações e também a lista de arestas
+            for idx, (v, p) in enumerate(self.grafo[origem]):
+                if v == destino:
+                    if p != peso :
+                        self.grafo[origem][idx] = (destino, peso)
+                        print(f"Peso da aresta de {origem} para {destino} atualizado para {peso}.")
+
+            for idx, (v, p) in enumerate(self.grafo[destino]):
+                if v == origem:
+                    if p != peso :
+                        self.grafo[destino][idx] = (origem, peso)
+                        print(f"Peso da aresta de {destino} para {origem} atualizado para {peso}.")
+
+            for idx, (a, b, p) in enumerate(self.arestas):
+                if (a == origem and b == destino) or (a == destino and b == origem):
+                    if p != peso:
+                        self.arestas[idx] = (a, b, peso)
+                        print(f"Peso da aresta na lista de arestas atualizado para {peso}.")
             return
 
         if origem in self.grafo and destino in self.grafo:
             self.grafo[origem].append((destino, peso))
+            self.grafo[destino].append((origem, peso))
             self.arestas.append((origem, destino, peso))
-            print(f"Aresta direcionada adicionada de {origem} para {destino} com peso {peso}.")
+            print(f"Aresta não direcionada adicionada de {origem} para {destino} com peso {peso}.")
 
     def existeAresta(self, origem, destino):
         """Verifica se existe uma aresta de origem para destino."""
@@ -139,7 +174,13 @@ class GrafoNaoDirecionado(Grafo):
         if origem in self.grafo and destino in self.grafo:
             for v, _ in self.grafo[origem]:
                 if v == destino:
-                    return print(f"Existe aresta entre {origem} para {destino}")
+                    print(f"Existe aresta entre {origem} para {destino}")
+                    return True
+                
+            for v, _ in self.grafo[destino]:
+                if v == origem:
+                    print(f"Existe aresta entre {origem} para {destino}")
+                    return True
         return print(f"Não existe aresta entre {origem} para {destino}")
 
 ###########################################################################################################
@@ -158,6 +199,21 @@ class GrafoNaoDirecionado(Grafo):
         # return len(self.arestas)
 
  ###########################################################################################################
+
+    def checarGrafoCompleto(self):
+        print("\n---------------------------------------------------------------------------------------")
+        print("Checagem se o grafo é completo:");
+        numero_vertices = len(self.grafo)
+        numero_arestas = len(self.arestas)
+
+        numero_maximo_arestas = numero_vertices * (numero_vertices - 1) // 2
+
+        if numero_arestas == numero_maximo_arestas:
+            print("O grafo é completo!")
+            return True
+        else:
+            print("O grafo não é completo.")
+            return False
 
 ###########################################################################################################           
 class GrafoDirecionado(Grafo):
@@ -263,4 +319,21 @@ class GrafoDirecionado(Grafo):
         # return len(self.arestas)
 
 ###########################################################################################################
+
+    def checarGrafoCompleto(self):
+        print("\n---------------------------------------------------------------------------------------")
+        print("Checagem se o grafo é completo:");
+        numero_vertices = len(self.grafo)
+        numero_arestas = len(self.arestas)
+
+        numero_maximo_arestas = numero_vertices * (numero_vertices - 1)
+        print(numero_arestas)
+        print(numero_maximo_arestas)
+
+        if numero_arestas == numero_maximo_arestas:
+            print("O grafo é completo!")
+            return True
+        else:
+            print("O grafo não éj completo.")
+            return False
 ###########################################################################################################
