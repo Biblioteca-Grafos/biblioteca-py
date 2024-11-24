@@ -71,15 +71,38 @@ class Grafo:
         print("Checando se o grafo é vazio:");
         
         if not self.grafo or all(not arestas for arestas in self.grafo.values()):
-            print("O grafo está vazio.");
+            print("O grafo está vazio.")
             return True
         
-        print("O grafo não está vazio.");
+        print("O grafo não está vazio.")
         return False
 
  
 ###########################################################################################################
 
+    def busca_em_profundidade(self, vertice, visitados):
+        visitados.add(vertice)
+        for v, _ in self.grafo[vertice]:
+            if v not in visitados:
+                self.busca_em_profundidade(v, visitados)
+
+    def checarConectividadeSimples(self):
+        visitados = set()
+        
+        tem_arestas = any(self.grafo[vertice] for vertice in self.grafo)
+        if not tem_arestas:
+            print("O grafo possui vértices, mas não possui nenhuma aresta.")
+            return False
+        
+        primeiro_vertice = next(iter(self.grafo))
+        self.busca_em_profundidade(primeiro_vertice, visitados)
+
+        if len(visitados) == len(self.grafo):
+            print("O grafo é simplesmente conexo!")
+            return True
+        else:
+            print("O grafo não é simplesmente conexo!")
+            return False
 
 ###########################################################################################################
 class GrafoNaoDirecionado(Grafo):
@@ -334,6 +357,37 @@ class GrafoDirecionado(Grafo):
             print("O grafo é completo!")
             return True
         else:
-            print("O grafo não éj completo.")
+            print("O grafo não é completo.")
             return False
+###########################################################################################################
+    
+    def busca_em_profundidade(self, vertice, visitados):
+        visitados.add(vertice)
+        for v, _ in self.grafo[vertice]:
+            if v not in visitados:
+                self.busca_em_profundidade(v, visitados)
+    
+    def checarConectividadeSimples(self):
+        for vertice in self.grafo:
+            for vizinho, peso in self.grafo[vertice]:
+                if not any(v == vertice for v, _ in self.grafo[vizinho]):
+                    self.grafo[vizinho].append((vertice, peso))
+        
+        visitados = set()
+        
+        tem_arestas = any(self.grafo[vertice] for vertice in self.grafo)
+        if not tem_arestas:
+            print("O grafo possui vértices, mas não possui nenhuma aresta. Logo, não é simplesmente conexo.")
+            return False
+        
+        primeiro_vertice = next(iter(self.grafo))
+        self.busca_em_profundidade(primeiro_vertice, visitados)
+
+        if len(visitados) == len(self.grafo):
+            print("O grafo é simplesmente conexo!")
+            return True
+        else:
+            print("O grafo não é simplesmente conexo!")
+            return False
+
 ###########################################################################################################
