@@ -281,6 +281,83 @@ class GrafoNaoDirecionado(Grafo):
         else:
             print("O grafo não é completo.")
             return False
+        
+    def _dfs(self, u, visitados, discovery_time, low, parent, articulacoes, pontes, time):
+        print(f"Visitando vértice {u}")
+        visitados[u] = True
+        discovery_time[u] = low[u] = time
+        time += 1
+        filhos = 0
+        
+        for v, _ in self.grafo[u]:  
+            print(f"Verificando vértice {v} a partir de {u}") 
+            if not visitados[v]:
+                print(f"Vértice {v} ainda não foi visitado, realizando DFS para {v}")
+                filhos += 1
+                parent[v] = u
+                self._dfs(v, visitados, discovery_time, low, parent, articulacoes, pontes, time)
+
+                low[u] = min(low[u], low[v])
+
+                if low[v] > discovery_time[u]:
+                    pontes.append((u, v))
+
+                if parent[u] is None and filhos > 1:
+                    articulacoes.add(u)
+                if parent[u] is not None and low[v] >= discovery_time[u]:
+                    articulacoes.add(u)
+            elif v != parent[u]:
+                low[u] = min(low[u], discovery_time[v])
+
+    def encontrarPonteEArticulacao(self):
+        visitados = {v: False for v in self.grafo}
+        discovery_time = {v: -1 for v in self.grafo} 
+        low = {v: -1 for v in self.grafo}
+        parent = {v: None for v in self.grafo} 
+        articulacoes = set()
+        pontes = []
+
+        time = 0
+        for u in self.grafo:
+            if not visitados[u]: 
+                self._dfs(u, visitados, discovery_time, low, parent, articulacoes, pontes, time)
+
+        print(f"Vértices de articulação: {articulacoes}")
+        print(f"Pontes: {pontes}")
+        return articulacoes, pontes
+    
+
+    def _dfs_tarjan(self, u, visitados, discovery_time, low, parent, pontes, time):
+        visitados[u] = True
+        discovery_time[u] = low[u] = time
+        time += 1
+
+        for v, _ in self.grafo[u]:
+            if not visitados[v]:
+                parent[v] = u
+                self._dfs_tarjan(v, visitados, discovery_time, low, parent, pontes, time)
+
+                low[u] = min(low[u], low[v])
+
+                if low[v] > discovery_time[u]:
+                    pontes.append((u, v))
+            elif v != parent[u]:
+                low[u] = min(low[u], discovery_time[v])
+
+    def metodo_tarjan(self):
+        visitados = {u: False for u in self.grafo}
+        discovery_time = {u: -1 for u in self.grafo}
+        low = {u: -1 for u in self.grafo}
+        parent = {u: None for u in self.grafo}
+        pontes = []
+
+        time = 0
+        for u in self.grafo:
+            if not visitados[u]:
+                self._dfs_tarjan(u, visitados, discovery_time, low, parent, pontes, time)
+
+        print(f"As pontes são {pontes}")
+        return pontes
 
 ###########################################################################################################           
 class GrafoDirecionado(Grafo):
@@ -298,7 +375,7 @@ class GrafoDirecionado(Grafo):
             self.grafo[origem] = [(v, p) for v, p in self.grafo[origem] if v != destino]
 
 
-   
+
     def estaoAdjacentes(self, vertice1, vertice2):
         if vertice1 in self.grafo and vertice2 in self.grafo:
             return any(v == vertice2 for v, _ in self.grafo[vertice1])
@@ -409,11 +486,14 @@ class GrafoDirecionado(Grafo):
             return False
 ###########################################################################################################
     
-    def busca_em_profundidade(self, vertice, visitados):
+    def busca_em_profundidade(self, vertice, visitados, componente = None):
         visitados.add(vertice)
+        if componente is not None:
+            componente.append(vertice)
+        
         for v, _ in self.grafo[vertice]:
             if v not in visitados:
-                self.busca_em_profundidade(v, visitados)
+                self.busca_em_profundidade(v, visitados, componente)
     
     def checarConectividadeSimples(self):
         for vertice in self.grafo:
@@ -469,7 +549,158 @@ class GrafoDirecionado(Grafo):
         else:
             print("\nNão foram encontradas pontes no grafo.")
 ###########################################################################################################
+    def criarGrafoReverso(self):
+        grafo_reverso = GrafoDirecionado()
+        for vertice in self.grafo:
+            grafo_reverso.adicionarVertice(vertice)
+            print(f"Vértice {vertice} adicionado ao grafo reverso.")
+        
+        for vertice in self.grafo:
+            for vizinho, peso in self.grafo[vertice]:
+                print(f"Adicionando aresta de {vizinho} para {vertice} com peso {peso}")
+                grafo_reverso.adicionarAresta(vizinho, vertice, peso)
 
- 
-   
+        return grafo_reverso
 
+
+    def checarConectividadeSemifortemente(self):
+        grafo_reverso = self.criarGrafoReverso()
+
+        for vertice in self.grafo:
+            visitados_normal = set()
+            self.busca_em_profundidade(vertice, visitados_normal)
+            
+            visitados_reverso = set()
+            grafo_reverso.busca_em_profundidade(vertice, visitados_reverso)
+            
+            if len(visitados_normal) != len(self.grafo) or len(visitados_reverso) != len(self.grafo):
+                print(f"O grafo não é semifortemente conexo!")
+                return False
+
+        print("O grafo é semifortemente conexo!")
+        return True
+    
+    def checarConectividadeFortemente(self):
+        visitados_original = set()
+        primeiro_vertice = next(iter(self.grafo))  # Pega o primeiro vértice
+        self.busca_em_profundidade(primeiro_vertice, visitados_original)
+
+        if len(visitados_original) != len(self.grafo):
+            print("O grafo não é fortemente conexo!")
+            return False
+
+        grafo_reverso = self.criarGrafoReverso()
+
+        visitados_reverso = set()
+        grafo_reverso.busca_em_profundidade(primeiro_vertice, visitados_reverso)
+
+        if len(visitados_reverso) == len(self.grafo):
+            print("O grafo é fortemente conexo!")
+            return True
+        else:
+            print("O grafo não é fortemente conexo!")
+            return False
+        
+    def kosaraju(self):
+        from collections import deque
+        stack = deque()
+        visitados = set()
+        
+        for vertice in self.grafo:
+            if vertice not in visitados:
+                self._dfs_ordenar(vertice, visitados, stack)
+
+        grafo_reverso = self.criarGrafoReverso()
+        
+        visitados.clear()
+        componentes = []
+
+        while stack:
+            vertice = stack.pop()
+            if vertice not in visitados:
+                componente = []
+                grafo_reverso.busca_em_profundidade(vertice, visitados, componente)
+                componentes.append(componente)
+        
+        print("Componentes fortemente conexos:", componentes)
+        return componentes
+
+    def _dfs_ordenar(self, vertice, visitados, stack):
+        visitados.add(vertice)
+        for v, _ in self.grafo[vertice]:
+            if v not in visitados:
+                self._dfs_ordenar(v, visitados, stack)
+        stack.append(vertice)
+
+    def _dfs(self, u, visitados, discovery_time, low, parent, articulacoes, pontes, time):
+        visitados[u] = True
+        discovery_time[u] = low[u] = time
+        time += 1
+        filhos = 0
+        
+        for v, _ in self.grafo.get(u, []):
+            if not visitados[v]:
+                filhos += 1
+                parent[v] = u
+                self._dfs(v, visitados, discovery_time, low, parent, articulacoes, pontes, time)
+
+                low[u] = min(low[u], low[v])
+
+                if low[v] > discovery_time[u]:
+                    pontes.append((u, v))
+
+                if parent[u] is None and filhos > 1:
+                    articulacoes.add(u)
+                if parent[u] is not None and low[v] >= discovery_time[u]:
+                    articulacoes.add(u)
+            elif v != parent[u]:
+                low[u] = min(low[u], discovery_time[v])
+
+    def encontrarPonteEArticulacao(self):
+        visitados = {u: False for u in self.grafo}
+        discovery_time = {u: -1 for u in self.grafo}
+        low = {u: -1 for u in self.grafo}
+        parent = {u: None for u in self.grafo}
+        articulacoes = set()
+        pontes = []
+
+        time = 0
+        for u in self.grafo:
+            if not visitados[u]:
+                self._dfs(u, visitados, discovery_time, low, parent, articulacoes, pontes, time)
+
+        print(f"Vértices de articulação: {articulacoes}")
+        print(f"Pontes: {pontes}")
+        return articulacoes, pontes
+    
+    def _dfs_tarjan(self, u, visitados, discovery_time, low, parent, pontes, time):
+        visitados[u] = True
+        discovery_time[u] = low[u] = time
+        time += 1
+
+        for v, _ in self.grafo.get(u, []):
+            if v not in discovery_time:
+                parent[v] = u
+                self._dfs_tarjan(v, visitados, discovery_time, low, parent, pontes, time)
+                
+                low[u] = min(low[u], low[v])
+
+                if low[v] > discovery_time[u]:
+                    pontes.append((u, v))
+            elif v != parent.get(u):
+                low[u] = min(low[u], discovery_time[v])
+
+    def metodo_tarjan_direcionado(self):
+        visitados = {}
+        discovery_time = {}
+        low = {}
+        parent = {}
+        pontes = []
+        time = 0
+
+        for u in self.grafo:
+            if u not in visitados:
+                self._dfs_tarjan(u, visitados, discovery_time, low, parent, pontes, time)
+
+        print(f"Pontes: {pontes}")
+        return pontes

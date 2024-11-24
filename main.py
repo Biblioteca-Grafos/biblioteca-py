@@ -1,6 +1,29 @@
 from grafo import *
 from grafoFuncoes import *
+import networkx as nx
+import os
 
+
+def exportarGrafoParaGraphML(grafoNDir, nome_arquivo=r'..\Desktop\Grafo_Trabalho\biblioteca-py\exportar_grafo\grafo.graphml'):
+    #COLOCAR O DIRETÓRIO DO COMPUTADOR ESPECÍFICO PARA QUE FUNCIONE
+    
+    # Garantir que o diretório de destino existe
+    diretorio = os.path.dirname(nome_arquivo)
+    if not os.path.exists(diretorio):
+        os.makedirs(diretorio)
+    
+    G = nx.Graph()  # Para grafo não direcionado
+    # G = nx.DiGraph()  # Para grafo direcionado
+    
+    # Adicionando vértices e arestas ao grafo do NetworkX
+    for v1, arestas in grafoNDir.grafo.items():
+        G.add_node(v1)
+        for v2, peso in arestas:
+            G.add_edge(v1, v2, weight=peso)
+
+    # Exportando para o formato GraphML
+    nx.write_graphml(G, nome_arquivo)
+    print(f"Grafo exportado para {nome_arquivo}")
 
 ##Script principal
 print("")
@@ -20,6 +43,14 @@ print("Aqui começa o grafo não direcionado\n")
 # grafoNDir.adicionarVertice("A")
 # grafoNDir.adicionarVertice("B")
 # grafoNDir.adicionarVertice("C")
+# # grafoNDir.checarGrafoVazio()
+# grafoNDir.adicionarAresta("A","B", 33)
+# grafoNDir.adicionarAresta("B","C", 33)
+# grafoNDir.encontrarPonteEArticulacao()
+# grafoNDir.adicionarAresta("A","C", 33)
+# grafoNDir.adicionarAresta("A","C", 55)
+# grafoNDir.adicionarAresta("C","A", 34)
+# grafoNDir.adicionarAresta("C","C", 34)
 # grafoNDir.checarGrafoVazio()
 #grafoNDir.adicionarAresta("A","B", 33)
 #grafoNDir.adicionarAresta("B","C", 33)
@@ -60,6 +91,14 @@ grafoDir = GrafoDirecionado()
 grafoDir.adicionarAresta("A","B", 33)
 #grafoDir.adicionarAresta("A", "B", 33) # Não será adicionada novamente
 grafoDir.adicionarAresta("B","C", 33)
+# grafoDir.checarConectividadeSimples()
+# grafoDir.checarConectividadeSemifortemente()
+# grafoDir.kosaraju()
+grafoDir.encontrarPonteEArticulacao()
+# grafoDir.encontrarPonteEArticulacao()
+# grafoDir.adicionarAresta("A","B", 33)
+# grafoDir.adicionarAresta("A", "B", 33) # Não será adicionada novamente
+# grafoDir.adicionarAresta("B","C", 33)
 
 #grafoDir.mostrarMatrizAdjacencia()
 #grafoDir.mostrarArestas()
@@ -72,6 +111,9 @@ grafoDir.adicionarAresta("B","C", 33)
 # grafoDir.quantidadeVertices()
 #grafoDir.quantidadeArestas()
 grafoDir.verificarPontes()
+# grafoDir.quantidadeArestas()
+
+exportarGrafoParaGraphML(grafoDir)
 
 print("Aqui começa o grafo direcionado");
 grafoDir = GrafoDirecionado();
