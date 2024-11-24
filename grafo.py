@@ -9,14 +9,11 @@ class Grafo:
         self.rotulos = {}
         self.rotulosArestas = {}
 
-
-
 ##Criar adicionar excluir etc
     def criarGrafo(self,x):
         for i in range(x):
             vertice = f"V{i+1}"
             self.adicionarVertice(vertice)
-
 
     def criarGrafoAleatorio(self, minVertices, maxVertices, minArcos, maxArcos):
         vertices = random.randint(minVertices, maxVertices)
@@ -37,6 +34,27 @@ class Grafo:
             if self.adicionaArcoNaoDirigido(a, b):
                 arestas_criadas += 1
 
+    def criarGrafoReverso(self):
+        grafo_reverso = Grafo()
+
+
+        for vertice in self.grafo:
+            grafo_reverso.adicionarVertice(vertice)
+            
+            if vertice in self.vertices:
+                grafo_reverso.ponderarERotularVertice(vertice, self.vertices[vertice], self.rotulos.get(vertice, ""))
+            print(f"Vértice {vertice} adicionado ao grafo reverso.")
+
+
+        for vertice in self.grafo:
+            for vizinho, peso in self.grafo[vertice]:
+
+                print(f"Adicionando aresta reversa de {vizinho} para {vertice} com peso {peso}")
+                grafo_reverso.adicionaArcoDirigido(vizinho, vertice)
+                grafo_reverso.ponderarERotularAresta(vizinho, vertice, peso, self.rotulosArestas.get((vertice, vizinho), ""))
+        
+        return grafo_reverso
+
     def adicionarVertice(self, vertice):
         if vertice not in self.grafo:
             self.grafo[vertice] = []
@@ -52,7 +70,6 @@ class Grafo:
             return True
         print("Falha ao adicionar arco")
         return False
-
 
     def adicionaArcoDirigido(self, a, b):
         if a in self.grafo and b in self.grafo:
@@ -73,7 +90,6 @@ class Grafo:
 
     def ponderarERotularAresta(self, a, b, valor_ponderacao, rotulo):
         if a in self.grafo and b in self.grafo:
-            # Atualiza o peso da aresta em ambos os sentidos (para grafos não dirigidos)
             for i, (vizinho, peso) in enumerate(self.grafo[a]):
                 if vizinho == b:
                     self.grafo[a][i] = (b, valor_ponderacao)
@@ -83,45 +99,30 @@ class Grafo:
                     self.grafo[b][i] = (a, valor_ponderacao)
                     break
         
-            # Atualiza o peso também na lista de arestas
             for i, (v1, v2, peso) in enumerate(self.arestas):
                 if (v1 == a and v2 == b) or (v1 == b and v2 == a):
                     self.arestas[i] = (a, b, valor_ponderacao)
                     break
         
-            # Adiciona o rótulo à aresta
+
             self.rotulosArestas[(a, b)] = rotulo
-            self.rotulosArestas[(b, a)] = rotulo  # Para grafos não dirigidos
+            self.rotulosArestas[(b, a)] = rotulo
             print(f"Aresta ({a}, {b}) ponderada com '{valor_ponderacao}' e rotulada com '{rotulo}'.")
             return True
     
         print(f"Aresta ({a}, {b}) não existe no grafo.")
         return False
 
-
-
     def removeArco(self, a, b):
-        if a in self.grafo and b in [v[0] for v in self.grafo[a]]:
-            self.grafo[a] = [v for v in self.grafo[a] if v[0] != b]
-            print(f"Arco {a} --- {b} removido com sucesso.")
+        if a in self.grafo:
+            if b in [v[0] for v in self.grafo[a]]:
+                self.grafo[a] = [v for v in self.grafo[a] if v[0] != b]
+                print(f"Arco {a} --- {b} removido com sucesso.")
         else:
             print(f"Arco {a} --- {b} não existe e não pode ser removido.")
         
-        # Remover também a conexão reversa
         if b in self.grafo and a in [v[0] for v in self.grafo[b]]:
             self.grafo[b] = [v for v in self.grafo[b] if v[0] != a]
-
-
-    def existeAresta(self, a, b):
-        print("Verificando existência entre as arestas:")
-        if a in self.grafo and b in self.grafo:  # Verifica se ambos os vértices existem
-        # Verifica se b está na lista de adjacência de a
-            if any(vizinho == b for vizinho, _ in self.grafo[a]):
-                print(f"Existe aresta entre {a} e {b}")
-                return True
-        print(f"Não existe aresta entre {a} e {b}")
-        return False
-
 
 ##funcoes para exibir o grafo##
     def mostrarVertices(self):
@@ -144,7 +145,7 @@ class Grafo:
 
         for i, vertice1 in enumerate(listaVertices):
             for vizinho, peso in self.grafo[vertice1]:
-                if vizinho in listaVertices:  # Verifica se o vizinho existe
+                if vizinho in listaVertices:
                     j = listaVertices.index(vizinho)
                     minhaMatriz[i][j] = peso
 
@@ -154,7 +155,6 @@ class Grafo:
             linha = [str(minhaMatriz[i][j]) for j in range(quantVertices)]
             print(f"{listaVertices[i]} " + " ".join(linha))
         print("Fim representando Grafo com Matriz de Adjacência\n")
-
 
     def mostrarMatrizIncidencia(self):
         listaVertices = list(self.grafo.keys())
@@ -178,8 +178,17 @@ class Grafo:
 
 ####Verificaçoes
 
+    def existeAresta(self, a, b):
+        print("Verificando existência entre as arestas:")
+        if a in self.grafo and b in self.grafo: 
+            if any(vizinho == b for vizinho, _ in self.grafo[a]):
+                print(f"Existe aresta entre {a} e {b}")
+                return True
+        print(f"Não existe aresta entre {a} e {b}")
+        return False
+
     def ehVazio(self):
-        # Um grafo é vazio se não tem vértices ou arestas
+
         if not self.grafo:  # Sem vértices
             print("O grafo está vazio.")
             return True
@@ -190,14 +199,12 @@ class Grafo:
         return False
 
     def ehCompleto(self):
-        # Um grafo completo deve ter todos os pares de vértices conectados
         n = len(self.grafo)
         if n <= 1:  # Grafo com 0 ou 1 vértice é considerado completo
             print("O grafo é completo.")
             return True
 
         for vertice, adjacentes in self.grafo.items():
-            # Verificar se o número de adjacentes é igual a n-1 (todos os outros vértices)
             if len(adjacentes) != n - 1:
                 print("O grafo não é completo.")
                 return False
@@ -205,13 +212,80 @@ class Grafo:
         print("O grafo é completo.")
         return True
 
+########Verificar Conectividade
+    def busca_em_profundidade(self, vertice, visitados):
+        visitados.add(vertice)
+        for v, _ in self.grafo.get(vertice, []):
+            if v not in visitados:
+                self.busca_em_profundidade(v, visitados)
+
+    def checarConectividadeSimples(self):
+        visitados = set()
+
+        tem_arestas = any(self.grafo[vertice] for vertice in self.grafo)
+        if not tem_arestas:
+            print("O grafo possui vértices, mas não possui nenhuma aresta. Logo, não é simplesmente conexo.")
+            return False
+
+        
+        primeiro_vertice = next(iter(self.grafo))
+        self.busca_em_profundidade(primeiro_vertice, visitados)
+
+        if len(visitados) == len(self.grafo):
+            print("O grafo é simplesmente conexo!")
+            return True
+        else:
+            print("O grafo não é simplesmente conexo!")
+            return False
+
+    def checarConectividadeSemifortemente(self):
+        grafo_reverso = self.criarGrafoReverso()
+
+        for vertice in self.grafo:
+            visitados_normal = set()
+            self.busca_em_profundidade(vertice, visitados_normal)
+            
+            visitados_reverso = set()
+            grafo_reverso.busca_em_profundidade(vertice, visitados_reverso)
+            
+            if len(visitados_normal) != len(self.grafo) or len(visitados_reverso) != len(self.grafo):
+                print("O grafo não é semifortemente conexo!")
+                return False
+
+        print("O grafo é semifortemente conexo!")
+        return True
+
+    def checarConectividadeFortemente(self):
+        visitados_original = set()
+        primeiro_vertice = next(iter(self.grafo))  # Pega o primeiro vértice
+        self.busca_em_profundidade(primeiro_vertice, visitados_original)
+
+        if len(visitados_original) != len(self.grafo):
+            print("O grafo não é fortemente conexo! (não todos os vértices são acessíveis a partir de um vértice)")
+            return False
+
+        grafo_reverso = self.criarGrafoReverso()
+
+        visitados_reverso = set()
+        grafo_reverso.busca_em_profundidade(primeiro_vertice, visitados_reverso)
+
+        if len(visitados_reverso) == len(self.grafo):
+            print("O grafo é fortemente conexo!")
+            return True
+        else:
+            print("O grafo não é fortemente conexo!")
+            return False
+
+
+
+####Exportaçao
     def exportarParaGraphML(self, arquivo):
         import xml.etree.ElementTree as ET
 
         # Raiz do arquivo GraphML
         graphml = ET.Element("graphml", xmlns="http://graphml.graphdrawing.org/xmlns")
         
-        # Definir chaves para atributos de nós e arestas
+        #chaves para atributos de nós e arestas
         keys = [
             {"id": "weight_node", "for": "node", "attr.name": "weight", "attr.type": "double"},
             {"id": "label_node", "for": "node", "attr.name": "label", "attr.type": "string"},
@@ -224,37 +298,30 @@ class Grafo:
             ET.SubElement(graphml, "key", id=key["id"], for_=key["for"], 
                         attr_name=key["attr.name"], attr_type=key["attr.type"])
         
-        # Definir o grafo
         graph = ET.SubElement(graphml, "graph", id="G", edgedefault="undirected")
         
-        # Adicionar vértices
+
         for vertice in self.grafo:
             node = ET.SubElement(graph, "node", id=vertice)
             
-            # Adicionar peso como atributo do nó (se existir)
             if vertice in self.vertices:
                 data_weight = ET.SubElement(node, "data", key="weight_node")
                 data_weight.text = str(self.vertices[vertice])
             
-            # Adicionar rótulo como atributo do nó (se existir)
             if vertice in self.rotulos:
                 data_label = ET.SubElement(node, "data", key="label_node")
                 data_label.text = self.rotulos[vertice]
-
-        # Adicionar arestas
-        for a, b, peso in self.arestas:
+        
+        for (a, b, peso) in self.arestas:
             edge = ET.SubElement(graph, "edge", source=a, target=b)
             
-            # Adicionar peso como atributo da aresta
-            data_weight = ET.SubElement(edge, "data", key="weight_edge")
-            data_weight.text = str(peso)
-            
-            # Adicionar rótulo da aresta, se existir
             if (a, b) in self.rotulosArestas:
                 data_label = ET.SubElement(edge, "data", key="label_edge")
                 data_label.text = self.rotulosArestas[(a, b)]
-
-        # Converter o XML para string e salvar no arquivo
+            
+            data_weight = ET.SubElement(edge, "data", key="weight_edge")
+            data_weight.text = str(peso)
+        
         tree = ET.ElementTree(graphml)
-        tree.write(arquivo, encoding="utf-8", xml_declaration=True)
-        print(f"Grafo exportado para {arquivo} no formato GraphML.")
+        tree.write(arquivo)
+        print(f"Grafo exportado para {arquivo}")
