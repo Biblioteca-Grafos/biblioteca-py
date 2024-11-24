@@ -3,6 +3,7 @@ class Grafo:
     def __init__(self):
         self.grafo = {}
         self.arestas = []
+        
 
     def adicionarVertice(self, vertice):
         if vertice not in self.grafo:
@@ -106,7 +107,7 @@ class Grafo:
 
 ###########################################################################################################
 class GrafoNaoDirecionado(Grafo):
-    # def adicionarAresta(self, vertice1, vertice2, peso = 1):
+     # def adicionarAresta(self, vertice1, vertice2, peso = 1):
     #     if vertice1 in self.grafo and vertice2 in self.grafo:
     #         self.grafo[vertice1].append((vertice2, peso))
     #         self.grafo[vertice2].append((vertice1, peso))
@@ -152,7 +153,43 @@ class GrafoNaoDirecionado(Grafo):
                         f"NÃO está adjacente à aresta ({v2_1} - {v2_2}, peso {peso2})."
                     )
 
-                    ###########################################################################################################
+    def verificarPontes(self):
+        pontes = []
+        for u, v, peso in list(self.arestas):
+            # Remove temporariamente a aresta (u, v)
+            self.removerAresta(u, v)
+            print(f"Removendo temporariamente a aresta ({u}, {v}) para verificar se é uma ponte.")
+
+            # Verifica se o grafo ainda está conectado após a remoção da aresta
+            visitados = set()
+            self.busca_em_profundidade(u, visitados)
+
+            # Se nem todos os vértices foram visitados, então (u, v) é uma ponte
+            if len(visitados) < len(self.grafo):
+                pontes.append((u, v, peso))
+                print(f"Aresta ({u}, {v}) é uma ponte.")
+            else:
+                print(f"Aresta ({u}, {v}) NÃO é uma ponte.")
+
+            # Restaura a aresta (u, v)
+            self.adicionarAresta(u, v, peso)
+
+        # Exibe as pontes encontradas ou uma mensagem de ausência
+        if pontes:
+            print("\nPontes encontradas:")
+            for ponte in pontes:
+                print(f"Aresta ({ponte[0]} - {ponte[1]}) é uma ponte com peso {ponte[2]}.")
+        else:
+            print("\nNão foram encontradas pontes no grafo.")
+
+    def busca_em_profundidade(self, vertice, visitados):
+     visitados.add(vertice)
+     print(f"Visitando: {vertice}")  # Verifica o que está sendo visitado
+     for vizinho, _ in self.grafo.get(vertice, []):
+        if vizinho not in visitados:
+            self.busca_em_profundidade(vizinho, visitados)
+      
+                    
 ###########################################################################################################
 
     def adicionarAresta(self, origem, destino, peso = 1):
@@ -205,7 +242,14 @@ class GrafoNaoDirecionado(Grafo):
                     print(f"Existe aresta entre {origem} para {destino}")
                     return True
         return print(f"Não existe aresta entre {origem} para {destino}")
+    
+    def _dfs(self, vertice, visitados):
+        visitados.add(vertice)
+        for vizinho, _ in self.grafo[vertice]:
+            if vizinho not in visitados:
+                self._dfs(vizinho, visitados)
 
+   
 ###########################################################################################################
 ###########################################################################################################
 
@@ -240,6 +284,10 @@ class GrafoNaoDirecionado(Grafo):
 
 ###########################################################################################################           
 class GrafoDirecionado(Grafo):
+    def __init__(self):
+        self.grafo = {}  # Grafo representado por um dicionário de listas de adjacência
+        self.arestas = []  # Lista para armazenar todas as arestas (origem, destino, peso)
+    
     def adicionarAresta(self, origem, destino, peso=1):
         if origem in self.grafo and destino in self.grafo:
             self.grafo[origem].append((destino, peso))  # Corrigido: passando tupla (destino, peso)
@@ -390,4 +438,38 @@ class GrafoDirecionado(Grafo):
             print("O grafo não é simplesmente conexo!")
             return False
 
+
+    def verificarPontes(self):
+        """Verifica as pontes no grafo direcionado."""
+        pontes = []
+        for u, v, peso in list(self.arestas):
+            # Remove temporariamente a aresta (u, v)
+            self.removerAresta(u, v)
+            print(f"Removendo temporariamente a aresta ({u}, {v}) para verificar se é uma ponte.")
+
+            # Verifica se o grafo ainda está conectado após a remoção da aresta
+            visitados = set()
+            self.busca_em_profundidade(u, visitados)
+
+            # Se nem todos os vértices foram visitados, então (u, v) é uma ponte
+            if len(visitados) < len(self.grafo):
+                pontes.append((u, v, peso))
+                print(f"Aresta ({u}, {v}) é uma ponte.")
+            else:
+                print(f"Aresta ({u}, {v}) NÃO é uma ponte.")
+
+            # Restaura a aresta (u, v)
+            self.adicionarAresta(u, v, peso)
+
+        # Exibe as pontes encontradas ou uma mensagem de ausência
+        if pontes:
+            print("\nPontes encontradas:")
+            for ponte in pontes:
+                print(f"Aresta ({ponte[0]} -> {ponte[1]}) é uma ponte com peso {ponte[2]}.")
+        else:
+            print("\nNão foram encontradas pontes no grafo.")
 ###########################################################################################################
+
+ 
+   
+
