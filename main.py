@@ -1,6 +1,29 @@
 from grafo import *
 from grafoFuncoes import *
+import networkx as nx
+import os
 
+
+def exportarGrafoParaGraphML(grafoNDir, nome_arquivo=r'..\Desktop\Grafo_Trabalho\biblioteca-py\exportar_grafo\grafo.graphml'):
+    #COLOCAR O DIRETÓRIO DO COMPUTADOR ESPECÍFICO PARA QUE FUNCIONE
+    
+    # Garantir que o diretório de destino existe
+    diretorio = os.path.dirname(nome_arquivo)
+    if not os.path.exists(diretorio):
+        os.makedirs(diretorio)
+    
+    G = nx.Graph()  # Para grafo não direcionado
+    # G = nx.DiGraph()  # Para grafo direcionado
+    
+    # Adicionando vértices e arestas ao grafo do NetworkX
+    for v1, arestas in grafoNDir.grafo.items():
+        G.add_node(v1)
+        for v2, peso in arestas:
+            G.add_edge(v1, v2, weight=peso)
+
+    # Exportando para o formato GraphML
+    nx.write_graphml(G, nome_arquivo)
+    print(f"Grafo exportado para {nome_arquivo}")
 
 ###Script principal
 # print("")
@@ -69,6 +92,8 @@ grafoDir.checarConectividadeSemifortemente()
 # grafoDir.existeAresta("B","A")
 # grafoDir.quantidadeVertices()
 # grafoDir.quantidadeArestas()
+
+exportarGrafoParaGraphML(grafoDir)
 
 # print("Aqui começa o grafo direcionado");
 # grafoDir = GrafoDirecionado();
