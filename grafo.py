@@ -281,6 +281,39 @@ class GrafoNaoDirecionado(Grafo):
         print(f"Vértices de articulação: {articulacoes}")
         print(f"Pontes: {pontes}")
         return articulacoes, pontes
+    
+
+    def _dfs_tarjan(self, u, visitados, discovery_time, low, parent, pontes, time):
+        visitados[u] = True
+        discovery_time[u] = low[u] = time
+        time += 1
+
+        for v, _ in self.grafo[u]:
+            if not visitados[v]:
+                parent[v] = u
+                self._dfs_tarjan(v, visitados, discovery_time, low, parent, pontes, time)
+
+                low[u] = min(low[u], low[v])
+
+                if low[v] > discovery_time[u]:
+                    pontes.append((u, v))
+            elif v != parent[u]:
+                low[u] = min(low[u], discovery_time[v])
+
+    def metodo_tarjan(self):
+        visitados = {u: False for u in self.grafo}
+        discovery_time = {u: -1 for u in self.grafo}
+        low = {u: -1 for u in self.grafo}
+        parent = {u: None for u in self.grafo}
+        pontes = []
+
+        time = 0
+        for u in self.grafo:
+            if not visitados[u]:
+                self._dfs_tarjan(u, visitados, discovery_time, low, parent, pontes, time)
+
+        print(f"As pontes são {pontes}")
+        return pontes
 
 ###########################################################################################################           
 class GrafoDirecionado(Grafo):
@@ -561,3 +594,35 @@ class GrafoDirecionado(Grafo):
         print(f"Vértices de articulação: {articulacoes}")
         print(f"Pontes: {pontes}")
         return articulacoes, pontes
+    
+    def _dfs_tarjan(self, u, visitados, discovery_time, low, parent, pontes, time):
+        visitados[u] = True
+        discovery_time[u] = low[u] = time
+        time += 1
+
+        for v, _ in self.grafo.get(u, []):
+            if v not in discovery_time:
+                parent[v] = u
+                self._dfs_tarjan(v, visitados, discovery_time, low, parent, pontes, time)
+                
+                low[u] = min(low[u], low[v])
+
+                if low[v] > discovery_time[u]:
+                    pontes.append((u, v))
+            elif v != parent.get(u):
+                low[u] = min(low[u], discovery_time[v])
+
+    def metodo_tarjan_direcionado(self):
+        visitados = {}
+        discovery_time = {}
+        low = {}
+        parent = {}
+        pontes = []
+        time = 0
+
+        for u in self.grafo:
+            if u not in visitados:
+                self._dfs_tarjan(u, visitados, discovery_time, low, parent, pontes, time)
+
+        print(f"Pontes: {pontes}")
+        return pontes
