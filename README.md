@@ -34,7 +34,7 @@ Funções básicas para manipulação de grafos em ambas representações, inclu
 | Checagem de adjacência entre arestas| Sim |
 |Checagem da existência de arestas  | Sim |
 | Checagem da quantidade de vértices e arestas | Sim |
-| Checagem de grafo vazio e completo |  |
+| Checagem de grafo vazio e completo | Sim |
 |Checagem de conectividade em simplismente conexo, semi-fortemente conexo e fortemente conexo |   |
 | Checagem de quantidade de componentes fortemente conexos com Kosaraju |  |
 | Checagem de ponte e articulação |   |
