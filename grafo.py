@@ -421,3 +421,24 @@ class GrafoDirecionado(Grafo):
 
         print("O grafo é semifortemente conexo!")
         return True
+    
+    def checarConectividadeFortemente(self):
+        visitados_original = set()
+        primeiro_vertice = next(iter(self.grafo))  # Pega o primeiro vértice
+        self.busca_em_profundidade(primeiro_vertice, visitados_original)
+
+        if len(visitados_original) != len(self.grafo):
+            print("O grafo não é fortemente conexo! (não todos os vértices são acessíveis a partir de um vértice)")
+            return False
+
+        grafo_reverso = self.criarGrafoReverso()
+
+        visitados_reverso = set()
+        grafo_reverso.busca_em_profundidade(primeiro_vertice, visitados_reverso)
+
+        if len(visitados_reverso) == len(self.grafo):
+            print("O grafo é fortemente conexo!")
+            return True
+        else:
+            print("O grafo não é fortemente conexo!")
+            return False
