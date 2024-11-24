@@ -391,3 +391,33 @@ class GrafoDirecionado(Grafo):
             return False
 
 ###########################################################################################################
+    def criarGrafoReverso(self):
+        grafo_reverso = GrafoDirecionado()
+        for vertice in self.grafo:
+            grafo_reverso.adicionarVertice(vertice)
+            print(f"Vértice {vertice} adicionado ao grafo reverso.")
+        
+        for vertice in self.grafo:
+            for vizinho, peso in self.grafo[vertice]:
+                print(f"Adicionando aresta de {vizinho} para {vertice} com peso {peso}")
+                grafo_reverso.adicionarAresta(vizinho, vertice, peso)
+
+        return grafo_reverso
+
+
+    def checarConectividadeSemifortemente(self):
+        grafo_reverso = self.criarGrafoReverso()
+
+        for vertice in self.grafo:
+            visitados_normal = set()
+            self.busca_em_profundidade(vertice, visitados_normal)
+            
+            visitados_reverso = set()
+            grafo_reverso.busca_em_profundidade(vertice, visitados_reverso)
+            
+            if len(visitados_normal) != len(self.grafo) or len(visitados_reverso) != len(self.grafo):
+                print(f"O grafo não é semifortemente conexo!")
+                return False
+
+        print("O grafo é semifortemente conexo!")
+        return True
