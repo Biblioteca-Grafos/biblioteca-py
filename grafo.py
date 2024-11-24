@@ -361,11 +361,14 @@ class GrafoDirecionado(Grafo):
             return False
 ###########################################################################################################
     
-    def busca_em_profundidade(self, vertice, visitados):
+    def busca_em_profundidade(self, vertice, visitados, componente = None):
         visitados.add(vertice)
+        if componente is not None:
+            componente.append(vertice)
+        
         for v, _ in self.grafo[vertice]:
             if v not in visitados:
-                self.busca_em_profundidade(v, visitados)
+                self.busca_em_profundidade(v, visitados, componente)
     
     def checarConectividadeSimples(self):
         for vertice in self.grafo:
@@ -428,7 +431,7 @@ class GrafoDirecionado(Grafo):
         self.busca_em_profundidade(primeiro_vertice, visitados_original)
 
         if len(visitados_original) != len(self.grafo):
-            print("O grafo não é fortemente conexo! (não todos os vértices são acessíveis a partir de um vértice)")
+            print("O grafo não é fortemente conexo!")
             return False
 
         grafo_reverso = self.criarGrafoReverso()
@@ -442,3 +445,34 @@ class GrafoDirecionado(Grafo):
         else:
             print("O grafo não é fortemente conexo!")
             return False
+        
+    def kosaraju(self):
+        from collections import deque
+        stack = deque()
+        visitados = set()
+        
+        for vertice in self.grafo:
+            if vertice not in visitados:
+                self._dfs_ordenar(vertice, visitados, stack)
+
+        grafo_reverso = self.criarGrafoReverso()
+        
+        visitados.clear()
+        componentes = []
+
+        while stack:
+            vertice = stack.pop()
+            if vertice not in visitados:
+                componente = []
+                grafo_reverso.busca_em_profundidade(vertice, visitados, componente)
+                componentes.append(componente)
+        
+        print("Componentes fortemente conexos:", componentes)
+        return componentes
+
+    def _dfs_ordenar(self, vertice, visitados, stack):
+        visitados.add(vertice)
+        for v, _ in self.grafo[vertice]:
+            if v not in visitados:
+                self._dfs_ordenar(v, visitados, stack)
+        stack.append(vertice)
