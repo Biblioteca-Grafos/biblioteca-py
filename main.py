@@ -93,6 +93,8 @@ grafoDir.checarConectividadeSemifortemente()
 # grafoDir.quantidadeVertices()
 # grafoDir.quantidadeArestas()
 
+exportarGrafoParaGraphML(grafoDir)
+
 # print("Aqui começa o grafo direcionado");
 # grafoDir = GrafoDirecionado();
 # grafoDir.adicionarVertice("Belo Horizonte");
