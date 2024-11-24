@@ -237,6 +237,50 @@ class GrafoNaoDirecionado(Grafo):
         else:
             print("O grafo não é completo.")
             return False
+        
+    def _dfs(self, u, visitados, discovery_time, low, parent, articulacoes, pontes, time):
+        print(f"Visitando vértice {u}")
+        visitados[u] = True
+        discovery_time[u] = low[u] = time
+        time += 1
+        filhos = 0
+        
+        for v, _ in self.grafo[u]:  
+            print(f"Verificando vértice {v} a partir de {u}") 
+            if not visitados[v]:
+                print(f"Vértice {v} ainda não foi visitado, realizando DFS para {v}")
+                filhos += 1
+                parent[v] = u
+                self._dfs(v, visitados, discovery_time, low, parent, articulacoes, pontes, time)
+
+                low[u] = min(low[u], low[v])
+
+                if low[v] > discovery_time[u]:
+                    pontes.append((u, v))
+
+                if parent[u] is None and filhos > 1:
+                    articulacoes.add(u)
+                if parent[u] is not None and low[v] >= discovery_time[u]:
+                    articulacoes.add(u)
+            elif v != parent[u]:
+                low[u] = min(low[u], discovery_time[v])
+
+    def encontrarPonteEArticulacao(self):
+        visitados = {v: False for v in self.grafo}
+        discovery_time = {v: -1 for v in self.grafo} 
+        low = {v: -1 for v in self.grafo}
+        parent = {v: None for v in self.grafo} 
+        articulacoes = set()
+        pontes = []
+
+        time = 0
+        for u in self.grafo:
+            if not visitados[u]: 
+                self._dfs(u, visitados, discovery_time, low, parent, articulacoes, pontes, time)
+
+        print(f"Vértices de articulação: {articulacoes}")
+        print(f"Pontes: {pontes}")
+        return articulacoes, pontes
 
 ###########################################################################################################           
 class GrafoDirecionado(Grafo):
@@ -250,7 +294,7 @@ class GrafoDirecionado(Grafo):
             self.grafo[origem] = [(v, p) for v, p in self.grafo[origem] if v != destino]
 
 
-   
+
     def estaoAdjacentes(self, vertice1, vertice2):
         if vertice1 in self.grafo and vertice2 in self.grafo:
             return any(v == vertice2 for v, _ in self.grafo[vertice1])
@@ -476,3 +520,44 @@ class GrafoDirecionado(Grafo):
             if v not in visitados:
                 self._dfs_ordenar(v, visitados, stack)
         stack.append(vertice)
+
+    def _dfs(self, u, visitados, discovery_time, low, parent, articulacoes, pontes, time):
+        visitados[u] = True
+        discovery_time[u] = low[u] = time
+        time += 1
+        filhos = 0
+        
+        for v, _ in self.grafo.get(u, []):
+            if not visitados[v]:
+                filhos += 1
+                parent[v] = u
+                self._dfs(v, visitados, discovery_time, low, parent, articulacoes, pontes, time)
+
+                low[u] = min(low[u], low[v])
+
+                if low[v] > discovery_time[u]:
+                    pontes.append((u, v))
+
+                if parent[u] is None and filhos > 1:
+                    articulacoes.add(u)
+                if parent[u] is not None and low[v] >= discovery_time[u]:
+                    articulacoes.add(u)
+            elif v != parent[u]:
+                low[u] = min(low[u], discovery_time[v])
+
+    def encontrarPonteEArticulacao(self):
+        visitados = {u: False for u in self.grafo}
+        discovery_time = {u: -1 for u in self.grafo}
+        low = {u: -1 for u in self.grafo}
+        parent = {u: None for u in self.grafo}
+        articulacoes = set()
+        pontes = []
+
+        time = 0
+        for u in self.grafo:
+            if not visitados[u]:
+                self._dfs(u, visitados, discovery_time, low, parent, articulacoes, pontes, time)
+
+        print(f"Vértices de articulação: {articulacoes}")
+        print(f"Pontes: {pontes}")
+        return articulacoes, pontes
