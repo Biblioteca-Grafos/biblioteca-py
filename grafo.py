@@ -215,7 +215,7 @@ class Grafo:
 ########Verificar Conectividade
     def busca_em_profundidade(self, vertice, visitados):
         visitados.add(vertice)
-        for v, _ in self.grafo.get(vertice, []):
+        for v, _ in self.grafo.get(vertice, []):  # Adiciona a verificação para grafo.get
             if v not in visitados:
                 self.busca_em_profundidade(v, visitados)
 
@@ -227,10 +227,11 @@ class Grafo:
             print("O grafo possui vértices, mas não possui nenhuma aresta. Logo, não é simplesmente conexo.")
             return False
 
-        
+        # Começa a busca a partir do primeiro vértice
         primeiro_vertice = next(iter(self.grafo))
         self.busca_em_profundidade(primeiro_vertice, visitados)
 
+        # Verifica se todos os vértices foram visitados
         if len(visitados) == len(self.grafo):
             print("O grafo é simplesmente conexo!")
             return True
@@ -275,8 +276,74 @@ class Grafo:
         else:
             print("O grafo não é fortemente conexo!")
             return False
+        
+    def kosaraju(self):
+        from collections import deque
+        stack = deque()
+        visitados = set()
+        
+        # Passo 1: Realizar DFS no grafo original e ordenar os vértices
+        for vertice in self.grafo:
+            if vertice not in visitados:
+                self._dfs_ordenar(vertice, visitados, stack)
 
+        # Passo 2: Criar o grafo reverso
+        grafo_reverso = self.criarGrafoReverso()
+        
+        visitados.clear()
+        componentes = []
 
+        # Passo 3: Realizar DFS no grafo reverso, considerando a ordem dos vértices
+        while stack:
+            vertice = stack.pop()
+            if vertice not in visitados:
+                componente = []
+                # Usando busca_em_profundidade para encontrar os componentes
+                grafo_reverso.busca_em_profundidade(vertice, visitados)
+                componentes.append(componente)
+        
+        print("Componentes fortemente conexos:", componentes)
+        return componentes
+
+    def _dfs_ordenar(self, vertice, visitados, stack):
+        visitados.add(vertice)
+        for v, _ in self.grafo[vertice]:
+            if v not in visitados:
+                self._dfs_ordenar(v, visitados, stack)
+        stack.append(vertice)
+
+    def _dfs(self, u, visitados, discovery_time, low, parent, articulacoes, pontes, time):
+        visitados[u] = True
+        discovery_time[u] = low[u] = time
+        time += 1
+        for v in self.grafo[u]:
+            if not visitados[v]:
+                parent[v] = u
+                self._dfs(v, visitados, discovery_time, low, parent, articulacoes, pontes, time)
+                low[u] = min(low[u], low[v])
+                if low[v] > discovery_time[u]:
+                    pontes.append((u, v))
+                if parent[u] == -1 and len([n for n in self.grafo[u] if not visitados[n]]) > 1:
+                    articulacoes.append(u)
+            elif v != parent[u]:
+                low[u] = min(low[u], discovery_time[v])
+
+    def encontrarPonteEArticulacao(self):
+        visitados = {u: False for u in self.grafo}
+        discovery_time = {u: -1 for u in self.grafo}
+        low = {u: -1 for u in self.grafo}
+        parent = {u: None for u in self.grafo}
+        articulacoes = set()
+        pontes = []
+
+        time = 0
+        for u in self.grafo:
+            if not visitados[u]:
+                self._dfs(u, visitados, discovery_time, low, parent, articulacoes, pontes, time)
+
+        print(f"Vértices de articulação: {articulacoes}")
+        print(f"Pontes: {pontes}")
+        return articulacoes, pontes
 
 ####Exportaçao
     def exportarParaGraphML(self, arquivo):
