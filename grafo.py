@@ -3,7 +3,7 @@ class Grafo:
     def __init__(self):
         self.grafo = {}
         self.arestas = []
-        
+       
 
     def adicionarVertice(self, vertice):
         if vertice not in self.grafo:
@@ -119,6 +119,11 @@ class GrafoNaoDirecionado(Grafo):
             self.grafo[vertice2] = [(v, p) for v, p in self.grafo[vertice2] if v != vertice1]
             self.arestas = [(v1, v2, p) for v1, v2, p in self.arestas if (v1, v2) != (vertice1, vertice2) and (v2, v1) != (vertice1, vertice2)]
 
+    def verificarExistenciaAresta(self, vertice1, vertice2):
+     if vertice2 in [v[0] for v in self.grafo.get(vertice1, [])]:
+        return True
+     return False
+
    # Checagem de adjacência
     def estaoAdjacentes(self, vertice1, vertice2):
         if vertice1 in self.grafo and vertice2 in self.grafo:
@@ -189,6 +194,15 @@ class GrafoNaoDirecionado(Grafo):
         if vizinho not in visitados:
             self.busca_em_profundidade(vizinho, visitados)
       
+    def verificarConectividade(self):
+        """Verifica se o grafo é conexo usando DFS."""
+        visitados = set()
+        if self.grafo:  # Verifica se o grafo não está vazio
+            # Inicia a DFS a partir de um vértice qualquer
+            primeiro_vertice = next(iter(self.grafo))
+            self.busca_em_profundidade(primeiro_vertice, visitados)
+
+    
                     
 ###########################################################################################################
 
@@ -248,6 +262,7 @@ class GrafoNaoDirecionado(Grafo):
         for vizinho, _ in self.grafo[vertice]:
             if vizinho not in visitados:
                 self._dfs(vizinho, visitados)
+
 
    
 ###########################################################################################################
@@ -358,7 +373,97 @@ class GrafoNaoDirecionado(Grafo):
 
         print(f"As pontes são {pontes}")
         return pontes
+############################################################
+    def verificarSeEulerianoDFS(self):
+        print(f"------------------------------------------------------------")
+        print(f"Verificando se o grafo é EulerianoDFS.")
+        for vertice in self.grafo:
+            if len(self.grafo[vertice]) % 2 != 0:
+                print(f"O vértice {vertice} tem grau ímpar.")
+                return False
+        # Verifica se o grafo é conexo
+        if not self.verificarConectividade():
+            print("O grafo não é conexo.")
+            return False
+        return True
 
+    def fleury(self):
+       
+        caminho = []
+
+      
+        grafo_temp = self.grafo.copy()
+
+       
+        def podeRemoverAresta(u, v):
+            # Se a aresta (u, v) é a última aresta do grafo
+            if len(grafo_temp[u]) == 1:
+                return True
+
+          
+            grafo_simulado = grafo_temp.copy()
+            grafo_simulado[u] = [x for x in grafo_simulado[u] if x[0] != v]
+            grafo_simulado[v] = [x for x in grafo_simulado[v] if x[0] != u]
+
+   
+            visitados = set()
+            self.busca_em_profundidade(u, visitados)
+            return len(visitados) == len(grafo_simulado)
+
+        
+        vertice_inicial = next((v for v in self.grafo if self.grafo[v]), None)
+        if not vertice_inicial:
+            print("Não há arestas no grafo.")
+            return []
+
+        while any(self.grafo[vertice] for vertice in self.grafo):
+            for vizinho, _ in self.grafo[vertice_inicial]:
+                if podeRemoverAresta(vertice_inicial, vizinho):
+                    caminho.append((vertice_inicial, vizinho))
+                    self.removerAresta(vertice_inicial, vizinho)
+                    vertice_inicial = vizinho
+                    break
+
+        return caminho
+
+    def exibirCaminhoEulerianoDFS(self):
+        """Exibe o caminho euleriano, se o grafo for euleriano."""
+        if self.verificarSeEulerianoDFS():
+            caminho = self.fleury()
+            if caminho:
+                print("Caminho Euleriano encontrado:")
+                for aresta in caminho:
+                    print(f"Aresta: {aresta[0]} - {aresta[1]}")
+            else:
+                print("O grafo não possui um caminho euleriano válido.")
+        else:
+            print("O grafo não é euleriano.")
+
+
+
+    def fleury(self):
+        caminho = []
+        vertice_inicial = next((v for v in self.grafo if self.grafo[v]), None)
+        if not vertice_inicial:
+            print("Não há arestas no grafo.")
+            return []
+
+        while any(self.grafo[vertice] for vertice in self.grafo):
+            for vizinho, _ in self.grafo[vertice_inicial]:
+                if self.podeRemoverAresta(vertice_inicial, vizinho):
+                    caminho.append((vertice_inicial, vizinho))
+                    self.removerAresta(vertice_inicial, vizinho)
+                    vertice_inicial = vizinho
+                    break
+        return caminho
+
+    def exibirCaminhoEuleriano(self):
+        caminho = self.fleury()
+        if caminho:
+            print("Caminho Euleriano encontrado:")
+            for aresta in caminho:
+                print
+######################
 ###########################################################################################################           
 class GrafoDirecionado(Grafo):
     def __init__(self):
@@ -704,3 +809,9 @@ class GrafoDirecionado(Grafo):
 
         print(f"Pontes: {pontes}")
         return pontes
+    
+
+#############################################################################################
+
+
+   
