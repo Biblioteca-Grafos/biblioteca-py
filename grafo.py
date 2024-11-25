@@ -340,6 +340,60 @@ class Grafo:
         print(f"Vértices de articulação: {articulacoes}")
         print(f"Pontes: {pontes}")
         return articulacoes, pontes
+    
+    def _dfs_tarjan(self, u, visitados, discovery_time, low, parent, pontes, time):
+        visitados[u] = True
+        discovery_time[u] = low[u] = time
+        time += 1
+        for v, _ in self.grafo.get(u, []):
+            if v not in discovery_time:
+                parent[v] = u
+                self._dfs_tarjan(v, visitados, discovery_time, low, parent, pontes, time)
+                
+                low[u] = min(low[u], low[v])
+                if low[v] > discovery_time[u]:
+                    pontes.append((u, v))
+            elif v != parent.get(u):
+                low[u] = min(low[u], discovery_time[v])
+                
+    def metodo_tarjan_direcionado(self):
+        visitados = {}
+        discovery_time = {}
+        low = {}
+        parent = {}
+        pontes = []
+        time = 0
+        for u in self.grafo:
+            if u not in visitados:
+                self._dfs_tarjan(u, visitados, discovery_time, low, parent, pontes, time)
+        print(f"Pontes: {pontes}")
+        return pontes
+    
+    def verificarPontes(self):
+        """Verifica as pontes no grafo direcionado."""
+        pontes = []
+        for u, v, peso in list(self.arestas):
+            # Remove temporariamente a aresta (u, v)
+            self.removerAresta(u, v)
+            print(f"Removendo temporariamente a aresta ({u}, {v}) para verificar se é uma ponte.")
+            # Verifica se o grafo ainda está conectado após a remoção da aresta
+            visitados = set()
+            self.busca_em_profundidade(u, visitados)
+            # Se nem todos os vértices foram visitados, então (u, v) é uma ponte
+            if len(visitados) < len(self.grafo):
+                pontes.append((u, v, peso))
+                print(f"Aresta ({u}, {v}) é uma ponte.")
+            else:
+                print(f"Aresta ({u}, {v}) NÃO é uma ponte.")
+            # Restaura a aresta (u, v)
+            self.adicionarAresta(u, v, peso)
+        # Exibe as pontes encontradas ou uma mensagem de ausência
+        if pontes:
+            print("\nPontes encontradas:")
+            for ponte in pontes:
+                print(f"Aresta ({ponte[0]} -> {ponte[1]}) é uma ponte com peso {ponte[2]}.")
+        else:
+            print("\nNão foram encontradas pontes no grafo.")
 
 ####Exportaçao
     def exportarParaGraphML(self, arquivo):

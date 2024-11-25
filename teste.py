@@ -59,7 +59,8 @@ class Main:
         self.grafo.adicionaArcoNaoDirigido("V2", "V3", 3)
         self.grafo.ponderarERotularAresta("V1", "V2", 7, "R1")
         self.grafo.ponderarERotularVertice("V1", 10, "A1")
-        self.grafo.exportarParaDot()
+        self.grafo.metodo_tarjan_direcionado()
+        # self.grafo.exportarParaDot()
         self.grafo.exportarParaGraphML("grafo2.GRAPHML")
 if __name__ == "__main__":
     main = Main()
