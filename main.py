@@ -29,9 +29,9 @@ def exportarGrafoParaGraphML(grafoNDir, nome_arquivo=r'..\Desktop\Grafo_Trabalho
 # print("")
 # print("ESSA É A BIBLIOTECA DE MANIPULAÇÃO DE GRAFOS")
 # print("")
-# grafo = GrafoNaoDirecionado()
-# criarGrafoNDirecionado(grafo)
-# grafo.mostrarMatrizIncidencia()
+#grafo = GrafoNaoDirecionado()
+#criarGrafoNDirecionado(grafo)
+#grafo.mostrarMatrizIncidencia()
 
 
 
@@ -39,11 +39,11 @@ def exportarGrafoParaGraphML(grafoNDir, nome_arquivo=r'..\Desktop\Grafo_Trabalho
 
 # print("________________________________")
 # print("Aqui começa o grafo não direcionado\n")
-# grafoNDir = GrafoNaoDirecionado()
+#grafoNDir = GrafoNaoDirecionado()
 # grafoNDir.adicionarVertice("A")
 # grafoNDir.adicionarVertice("B")
 # grafoNDir.adicionarVertice("C")
-# # grafoNDir.checarGrafoVazio()
+# grafoNDir.checarGrafoVazio()
 # grafoNDir.adicionarAresta("A","B", 33)
 # grafoNDir.adicionarAresta("B","C", 33)
 # grafoNDir.adicionarAresta("A","C", 33)
@@ -56,7 +56,7 @@ def exportarGrafoParaGraphML(grafoNDir, nome_arquivo=r'..\Desktop\Grafo_Trabalho
 # grafoNDir.mostrarMatrizAdjacencia()
 # grafoNDir.mostrarMatrizIncidencia()
 # grafoNDir.mostrarArestas()
-# # print("________________________________");
+# print("________________________________");
 # print("Verificando adjacência no grafo não direcionado")
 # pares_de_vertices = [("A", "B"), ("B", "C"), ("A", "C")]
 # for vertice1, vertice2 in pares_de_vertices:
@@ -70,14 +70,14 @@ def exportarGrafoParaGraphML(grafoNDir, nome_arquivo=r'..\Desktop\Grafo_Trabalho
 # grafoNDir.quantidadeArestas()
 # grafoNDir.checarGrafoCompleto()
 
-# Exemplo para criar um grafo direcionado
-grafoDir = GrafoDirecionado()
-criarGrafoDirecionado(grafoDir)
+#Exemplo para criar um grafo direcionado
+# grafoDir = GrafoDirecionado()
+# criarGrafoDirecionado(grafoDir)
 # grafoDir.adicionarVertice("A")
 # grafoDir.adicionarVertice("B")
 # grafoDir.adicionarVertice("C")
 # grafoDir.checarConectividadeSimples()
-grafoDir.checarConectividadeSemifortemente()
+# grafoDir.checarConectividadeSemifortemente()
 # grafoDir.adicionarAresta("A","B", 33)
 # grafoDir.adicionarAresta("A", "B", 33) # Não será adicionada novamente
 # grafoDir.adicionarAresta("B","C", 33)
@@ -93,7 +93,7 @@ grafoDir.checarConectividadeSemifortemente()
 # grafoDir.quantidadeVertices()
 # grafoDir.quantidadeArestas()
 
-exportarGrafoParaGraphML(grafoDir)
+#exportarGrafoParaGraphML(grafoDir)
 
 # print("Aqui começa o grafo direcionado");
 # grafoDir = GrafoDirecionado();
