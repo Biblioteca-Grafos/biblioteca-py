@@ -213,11 +213,13 @@ class Grafo:
         return True
 
 ########Verificar Conectividade
-    def busca_em_profundidade(self, vertice, visitados):
+    def busca_em_profundidade(self, vertice, visitados, componente = None):
         visitados.add(vertice)
+        if componente is not None:
+            componente.append(vertice)
         for v, _ in self.grafo.get(vertice, []):  # Adiciona a verificação para grafo.get
             if v not in visitados:
-                self.busca_em_profundidade(v, visitados)
+                self.busca_em_profundidade(v, visitados, componente)
 
     def checarConectividadeSimples(self):
         visitados = set()
@@ -282,32 +284,26 @@ class Grafo:
         stack = deque()
         visitados = set()
         
-        # Passo 1: Realizar DFS no grafo original e ordenar os vértices
         for vertice in self.grafo:
             if vertice not in visitados:
                 self._dfs_ordenar(vertice, visitados, stack)
-
-        # Passo 2: Criar o grafo reverso
         grafo_reverso = self.criarGrafoReverso()
         
         visitados.clear()
         componentes = []
 
-        # Passo 3: Realizar DFS no grafo reverso, considerando a ordem dos vértices
         while stack:
             vertice = stack.pop()
             if vertice not in visitados:
                 componente = []
-                # Usando busca_em_profundidade para encontrar os componentes
-                grafo_reverso.busca_em_profundidade(vertice, visitados)
+                grafo_reverso.busca_em_profundidade(vertice, visitados, componente)
                 componentes.append(componente)
         
-        print("Componentes fortemente conexos:", componentes)
         return componentes
 
     def _dfs_ordenar(self, vertice, visitados, stack):
         visitados.add(vertice)
-        for v, _ in self.grafo[vertice]:
+        for v, _ in self.grafo.get(vertice, []):
             if v not in visitados:
                 self._dfs_ordenar(v, visitados, stack)
         stack.append(vertice)
