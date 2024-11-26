@@ -37,8 +37,12 @@ class Main:
             grafo = Grafo()
             grafo.criarGrafo(2)
             if grafo.adicionaArcoDirigido("V1", "V2"):
+                grafo.ponderarERotularVertice("V1", 2, "VERTICE 1")
+                grafo.ponderarERotularVertice("V2", 3, "VERTICE 2")
+                grafo.ponderarERotularAresta("V1", "V2", 3, "ARESTA 1")
                 grafo.mostrarListaAdjacencia()
                 print("Teste passou.")
+                grafo.exportarParaGraphML("teste.GRAPHML")
             else:
                 print("Teste falhou.")
 
@@ -129,7 +133,7 @@ class Main:
         # testeConectividadeSimples()
         # testeConectividadeFortemente()
         # testeKosaraju()
-        # self.grafo.exportarParaGraphML("grafo2.GRAPHML")
+        testeAdicionarArestaDirigida()
         # testeEuleriano()
 
 

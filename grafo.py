@@ -66,13 +66,12 @@ class Grafo:
                 grafo_reverso.ponderarERotularVertice(vertice, self.vertices[vertice], self.rotulos.get(vertice, ""))
             print(f"Vértice {vertice} adicionado ao grafo reverso.")
 
-
         for vertice in self.grafo:
-            for vizinho, peso in self.grafo[vertice]:
+            for vizinho in self.grafo[vertice]:
 
-                print(f"Adicionando aresta reversa de {vizinho} para {vertice} com peso {peso}")
+                print(f"Adicionando aresta reversa de {vizinho} para {vertice}")
                 grafo_reverso.adicionaArcoDirigido(vizinho, vertice)
-                grafo_reverso.ponderarERotularAresta(vizinho, vertice, peso, self.rotulosArestas.get((vertice, vizinho), ""))
+                # grafo_reverso.ponderarERotularAresta(vizinho, vertice, peso, self.rotulosArestas.get((vertice, vizinho), ""))
         
         return grafo_reverso
 
@@ -158,6 +157,7 @@ class Grafo:
 
     def mostrarListaAdjacencia(self):
         print("Representando Grafo com Lista de Adjacência")
+        print(self.arestas)
         for vertice, adjacentes in self.grafo.items():
             adjacencias = [f"{vizinho}({peso})" for vizinho, peso in adjacentes]
             print(f"{vertice} -> {' '.join(adjacencias)}")
@@ -240,7 +240,7 @@ class Grafo:
         visitados.add(vertice)
         if componente is not None:
             componente.append(vertice)
-        for v, _ in self.grafo.get(vertice, []):  # Adiciona a verificação para grafo.get
+        for v in self.grafo.get(vertice):  # Adiciona a verificação para grafo.get
             if v not in visitados:
                 self.busca_em_profundidade(v, visitados, componente)
 
@@ -312,6 +312,7 @@ class Grafo:
                 self._dfs_ordenar(vertice, visitados, stack)
         grafo_reverso = self.criarGrafoReverso()
         
+        
         visitados.clear()
         componentes = []
 
@@ -322,12 +323,11 @@ class Grafo:
                 grafo_reverso.busca_em_profundidade(vertice, visitados, componente)
                 componentes.append(componente)
         
-        print(f"Componentes conexos: {componentes}")
         return componentes
 
     def _dfs_ordenar(self, vertice, visitados, stack):
         visitados.add(vertice)
-        for v, _ in self.grafo.get(vertice, []):
+        for v in self.grafo.get(vertice):
             if v not in visitados:
                 self._dfs_ordenar(v, visitados, stack)
         stack.append(vertice)
