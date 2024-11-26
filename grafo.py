@@ -96,9 +96,10 @@ class Grafo:
         ##print("Falha, arco ja existe no grafo")
         return False
 
-    def adicionaArcoDirigido(self, a, b):
+    def adicionaArcoDirigido(self, a, b, peso=1):
         if a in self.grafo and b in self.grafo:
             self.grafo[a].append(b)
+            self.arestas.append((a, b, peso))
             print(f"Arco de {a} ---> {b} adicionado")
             return True
         print("falha ao adicionar Arco")
