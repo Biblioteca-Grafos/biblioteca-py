@@ -16,23 +16,31 @@ class Grafo:
             self.adicionarVertice(vertice)
 
     def criarGrafoAleatorio(self, minVertices, maxVertices, minArcos, maxArcos):
-        vertices = random.randint(minVertices, maxVertices)
-        maxArcoPossivel = vertices * (vertices - 1) // 2
-        num_arestas = random.randint(minArcos, min(maxArcos, maxArcoPossivel))
+        numVertices = random.randint(minVertices, maxVertices)
+        
+        #n = n*(n-1)/2 maximo de arestas de um grafo completo
+        maxArcoPossivel = numVertices * (numVertices - 1) // 2
+        numArestas = random.randint(minArcos, min(maxArcos, maxArcoPossivel))
 
-        print(f"Gerando grafo com {vertices} vértices e {num_arestas} arestas.")
+        print(f"Gerando grafo com {numVertices} vértices e {numArestas} arestas.")
         
-        self.criarGrafo(vertices)
+        self.criarGrafo(numVertices)
+
+        listVertices = list(self.grafo.keys())
+
+        # Para garantir que é conexo, o codigo liga todos os vertices primeiro como uma arvore
+        for i in range(len(listVertices) - 1):
+            self.adicionaArcoNaoDirigido(listVertices[i], listVertices[i + 1])
         
-        # Obter lista de vértices
-        verticess = list(self.grafo.keys())
+        arestasRestantes = numArestas - (numVertices - 1)
         
-        # Adicionar arestas aleatórias
-        arestas_criadas = 0
-        while arestas_criadas < num_arestas:
-            a, b = random.sample(verticess, 2)  # Selecionar dois vértices diferentes aleatoriamente
+        # Agora adiciona as arestas que sobrarem no grafo.
+        arestasCriadas = 0
+        while arestasCriadas < arestasRestantes:
+            a, b = random.sample(listVertices, 2)
             if self.adicionaArcoNaoDirigido(a, b):
-                arestas_criadas += 1
+                arestasCriadas += 1
+
 
     def criarGrafoReverso(self):
         grafo_reverso = Grafo()
@@ -45,13 +53,15 @@ class Grafo:
                 grafo_reverso.ponderarERotularVertice(vertice, self.vertices[vertice], self.rotulos.get(vertice, ""))
             print(f"Vértice {vertice} adicionado ao grafo reverso.")
 
-
         for vertice in self.grafo:
-            for vizinho, peso in self.grafo[vertice]:
-
-                print(f"Adicionando aresta reversa de {vizinho} para {vertice} com peso {peso}")
-                grafo_reverso.adicionaArcoDirigido(vizinho, vertice)
-                grafo_reverso.ponderarERotularAresta(vizinho, vertice, peso, self.rotulosArestas.get((vertice, vizinho), ""))
+            if self.grafo[vertice]:  # Verifica se o vértice tem vizinhos
+                for vizinho in self.grafo[vertice]:
+                    if vizinho and vizinho != "" and vizinho in self.grafo:  # Verifica se o vizinho não é vazio ou inválido
+                        print(f"Adicionando aresta reversa de {vizinho} para {vertice}")
+                        grafo_reverso.adicionaArcoDirigido(vizinho, vertice)
+                        # grafo_reverso.ponderarERotularAresta(vizinho, vertice, peso, self.rotulosArestas.get((vertice, vizinho), ""))
+                    else:
+                        print(f"Vizinho inválido ou vazio: {vizinho}")
         
         return grafo_reverso
 
@@ -62,13 +72,17 @@ class Grafo:
         return False
 
     def adicionaArcoNaoDirigido(self, a, b, peso=1):
-        if a in self.grafo and b in self.grafo and b not in [v for v, _ in self.grafo[a]]:
-            self.grafo[a].append((b, peso))
-            self.grafo[b].append((a, peso))
-            self.arestas.append((a, b, peso))
-            print(f"Arco {a} --- {b} adicionado com peso {peso}")
-            return True
-        print("Falha ao adicionar arco")
+        if a in self.grafo and b in self.grafo:
+            if b not in [v for v, _ in self.grafo[a]]:
+                self.grafo[a].append((b, peso))
+                self.grafo[b].append((a, peso))
+                self.arestas.append((a, b, peso))
+                print(f"Arco {a} --- {b} adicionado com peso {peso}")
+                return True
+        else:
+            print("Falha ao adicionar arco, arestas não existem")
+            return False
+        ##print("Falha, arco ja existe no grafo")
         return False
 
     def adicionaArcoDirigido(self, a, b):
@@ -103,7 +117,6 @@ class Grafo:
                 if (v1 == a and v2 == b) or (v1 == b and v2 == a):
                     self.arestas[i] = (a, b, valor_ponderacao)
                     break
-        
 
             self.rotulosArestas[(a, b)] = rotulo
             self.rotulosArestas[(b, a)] = rotulo
@@ -177,7 +190,6 @@ class Grafo:
 
 
 ####Verificaçoes
-
     def existeAresta(self, a, b):
         print("Verificando existência entre as arestas:")
         if a in self.grafo and b in self.grafo: 
@@ -188,7 +200,6 @@ class Grafo:
         return False
 
     def ehVazio(self):
-
         if not self.grafo:  # Sem vértices
             print("O grafo está vazio.")
             return True
@@ -213,11 +224,13 @@ class Grafo:
         return True
 
 ########Verificar Conectividade
-    def busca_em_profundidade(self, vertice, visitados, componente = None):
+    def busca_em_profundidade(self, vertice, visitados, componente=None):
         visitados.add(vertice)
         if componente is not None:
             componente.append(vertice)
-        for v, _ in self.grafo.get(vertice, []):  # Adiciona a verificação para grafo.get
+        for v, _ in self.grafo.get(vertice, []):
+            if v not in self.grafo:  # Verifica se v é válido
+                continue
             if v not in visitados:
                 self.busca_em_profundidade(v, visitados, componente)
 
@@ -299,11 +312,14 @@ class Grafo:
                 grafo_reverso.busca_em_profundidade(vertice, visitados, componente)
                 componentes.append(componente)
         
+        print(f"Componentes conexos: {componentes}")
         return componentes
 
     def _dfs_ordenar(self, vertice, visitados, stack):
         visitados.add(vertice)
         for v, _ in self.grafo.get(vertice, []):
+            if v not in self.grafo:
+                continue
             if v not in visitados:
                 self._dfs_ordenar(v, visitados, stack)
         stack.append(vertice)
@@ -368,158 +384,139 @@ class Grafo:
                 self._dfs_tarjan(u, visitados, discovery_time, low, parent, pontes, time)
         print(f"Pontes: {pontes}")
         return pontes
-    
 
 ########Verificar ponte DFS
+    # Verificar ponte DFS
     def verificarPontes(self):
-  
-     pontes = []
-    
-   
-     for u, v, peso in list(self.arestas):
-       
-        self.removeArco(u, v)
-        print(f"Removendo temporariamente a aresta ({u}, {v}) para verificar se é uma ponte.")
-        
-        # Verificar conectividade após remoção
-        visitados = set()
-        self.busca_em_profundidade(u, visitados)
-        
-        # Se a remoção da aresta desconectar o grafo, é uma ponte
-        if len(visitados) < len(self.grafo):
-            pontes.append((u, v, peso))
-            print(f"Aresta ({u}, {v}) é uma ponte com peso {peso}.")
-        else:
-            print(f"Aresta ({u}, {v}) NÃO é uma ponte.")
-        
-        # Re-adicionar a aresta
-        self.adicionaArcoNaoDirigido(u, v, peso)
-    
-    # Exibir todas as pontes encontradas
+        pontes = []
+        for u, v, peso in list(self.arestas):
+            self.removeArco(u, v)
+            print(f"Removendo temporariamente a aresta ({u}, {v}) para verificar se é uma ponte.")
+            
+            # Verificar conectividade após remoção
+            visitados = set()
+            self.busca_em_profundidade(u, visitados)
+            
+            # Se a remoção da aresta desconectar o grafo, é uma ponte
+            if len(visitados) < len(self.grafo):
+                pontes.append((u, v, peso))
+                print(f"Aresta ({u}, {v}) é uma ponte com peso {peso}.")
+            else:
+                print(f"Aresta ({u}, {v}) NÃO é uma ponte.")
+            
+            # Re-adicionar a aresta
+            self.adicionaArcoNaoDirigido(u, v, peso)
+
+        # Exibir todas as pontes encontradas
         if pontes:
-         print("\nPontes encontradas:")
-         for ponte in pontes:
-            print(f"Aresta ({ponte[0]} --- {ponte[1]}) é uma ponte com peso {ponte[2]}.")
+            print("\nPontes encontradas:")
+            for ponte in pontes:
+                print(f"Aresta ({ponte[0]} --- {ponte[1]}) é uma ponte com peso {ponte[2]}.")
         else:
-          print("\nNão foram encontradas pontes no grafo.")
-########Verificar Euleriano 
-        
-    def verificarConectividade(self):
+            print("\nNão foram encontradas pontes no grafo.")
+
+    # Verificar se é Euleriano
+    def ehConexo(self):
         visitados = set()
-        if self.grafo:  
+        if self.grafo:
             primeiro_vertice = next(iter(self.grafo))
             self.busca_em_profundidade(primeiro_vertice, visitados)
         return len(visitados) == len(self.grafo)
     
-    def removerAresta(self, u, v):
-    
-     if u in self.grafo and v in self.grafo:
-        self.grafo[u] = [x for x in self.grafo[u] if x[0] != v]
-        self.grafo[v] = [x for x in self.grafo[v] if x[0] != u]
-        print(f"Aresta entre {u} e {v} removida.")
-     else:
-        print(f"Aresta entre {u} e {v} não existe ou vértices inválidos.")
+    def ehEuleriano(self):
+        print("------------------------------------------------------------")
+        print("Verificando se o grafo é EulerianoDFS.")
+        tem_grau_impar = 0
+        list_grau_impar = []
 
-    def verificarSeEulerianoDFS(self):
-      print(f"------------------------------------------------------------")
-      print(f"Verificando se o grafo é EulerianoDFS.")
-      if hasattr(self, 'verificado_euleriano') and self.verificado_euleriano:
+        for vertice in self.grafo:
+            if len(self.grafo[vertice]) % 2 != 0:
+                list_grau_impar.append(vertice)
+                tem_grau_impar += 1
+
+        if not self.ehConexo():
+            print("O grafo não é conexo.")
+            return False
+        
+        # G é Euleriano se  e somente se possui 2 vertices de grau impar
+        if tem_grau_impar not in [0, 2]:
+            print("O grafo não tem o número correto de vértices com grau ímpar.")
+            print(f"impares: {list_grau_impar}")
+            return False
+
+        print("O grafo é Euleriano.")
         return True
-      
-      tem_grau_impar = 0  # Contador para vértices com grau ímpar
-    
-      for vertice in self.grafo:
-        if len(self.grafo[vertice]) % 2 != 0:
-            print(f"O vértice {vertice} tem grau ímpar.")
-            tem_grau_impar += 1
-    
-    # O grafo é Euleriano se tiver 0 ou 2 vértices de grau ímpar e for conexo
-      if tem_grau_impar not in [0, 2]:
-        print("O grafo não tem o número correto de vértices com grau ímpar.")
-        self.verificado_euleriano = False
-        return False
-
-      if not self.verificarConectividade():
-        print("O grafo não é conexo.")
-        self.verificado_euleriano = False
-        return False
-
-      print("O grafo é Euleriano.")
-      return True
-      
 
     def fleury(self):
         caminho = []
-        grafo_temp = self.grafo.copy()
-       
+        grafo_temp = {k: v[:] for k, v in self.grafo.items()}
+
         def podeRemoverAresta(u, v):
             if len(grafo_temp[u]) == 1:
-                return True
-
-          
-            grafo_simulado = {k: v[:] for k, v in grafo_temp.items()}
-            grafo_simulado[u] = [x for x in grafo_simulado[u] if x[0] != v]
-            grafo_simulado[v] = [x for x in grafo_simulado[v] if x[0] != u]
-
-   
+                return True  # A única aresta conectada pode ser removida
+            
+            grafo_temp[u] = [x for x in grafo_temp[u] if x[0] != v]
+            grafo_temp[v] = [x for x in grafo_temp[v] if x[0] != u]
+            
+            # Verifica conectividade
             visitados = set()
-            def dfs(vertice, grafo_simulado, visitados):
+            def dfs(vertice):
                 visitados.add(vertice)
-                for vizinho, _ in grafo_simulado.get(vertice, []):
-                  if vizinho not in visitados:
-                    dfs(vizinho, grafo_simulado, visitados)
-          
-            dfs(u, grafo_simulado, visitados)
+                for vizinho, _ in grafo_temp.get(vertice, []):
+                    if vizinho not in visitados:
+                        dfs(vizinho)
+            
+            dfs(u)
+            
+            grafo_temp[u].append((v, 1))
+            grafo_temp[v].append((u, 1))
 
-        
-        vertice_inicial = next((v for v in self.grafo if self.grafo[v]), None)
+            # Verifica se o grafo permaneceu conectado
+            return len(visitados) == len(grafo_temp)
+
+        vertice_inicial = next((v for v in grafo_temp if grafo_temp[v]), None)
         if not vertice_inicial:
             print("Não há arestas no grafo.")
             return []
 
-        while any(self.grafo[vertice] for vertice in self.grafo):  # Enquanto houver arestas
+        while any(grafo_temp[vertice] for vertice in grafo_temp):  # Enquanto houver arestas
             encontrou_aresta = False
-            print(f"Estado atual do grafo antes da remoção de aresta: {grafo_temp}")  # Verificando o grafo antes da remoção
-        for vizinho, _ in self.grafo[vertice_inicial]:
-            if podeRemoverAresta(vertice_inicial, vizinho):
-                caminho.append((vertice_inicial, vizinho))  # Adiciona a aresta ao caminho
-                # Remove a aresta do grafo temporário
-                grafo_temp[vertice_inicial] = [
-                    x for x in grafo_temp[vertice_inicial] if x[0] != vizinho
-                ]
-                grafo_temp[vizinho] = [
-                    x for x in grafo_temp[vizinho] if x[0] != vertice_inicial
-                ]
-                print(f"Aresta removida: ({vertice_inicial}, {vizinho})")  # Mostra qual aresta foi removida
-                print(f"Estado atual do grafo após a remoção: {grafo_temp}")  # Verificando o grafo após remoção
-                vertice_inicial = vizinho  # Atualiza o vértice inicial para o próximo vértice
-                encontrou_aresta = True
-                break
+            for vizinho, _ in grafo_temp[vertice_inicial]:
+                if podeRemoverAresta(vertice_inicial, vizinho):
+                    caminho.append((vertice_inicial, vizinho))  # Adiciona a aresta ao caminho
+                    
+                    # Remove a aresta do grafo temporário
+                    grafo_temp[vertice_inicial] = [
+                        x for x in grafo_temp[vertice_inicial] if x[0] != vizinho
+                    ]
+                    grafo_temp[vizinho] = [
+                        x for x in grafo_temp[vizinho] if x[0] != vertice_inicial
+                    ]
+                    
+                    print(f"Aresta removida: ({vertice_inicial}, {vizinho})")
+                    vertice_inicial = vizinho  # Atualiza o vértice inicial
+                    encontrou_aresta = True
+                    break
+            
             if not encontrou_aresta:
-                print("Nenhuma aresta válida encontrada. Isso não deveria acontecer!")
+                print("Nenhuma aresta válida encontrada.")
                 break
 
-        
         return caminho
 
     def exibirCaminhoEulerianoDFS(self):
-       if self.verificarSeEulerianoDFS():
-          caminho = self.fleury()
-          if caminho:
-            print("Caminho Euleriano encontrado:")
-            caminho_formatado = [caminho[0][0]]  # Adiciona o vértice inicial
-            for aresta in caminho:
-              caminho_formatado.append(aresta[1])  # Adiciona o segundo vértice de cada aresta
-            print("Caminho Euleriano:", " -> ".join(caminho_formatado))
-          else:
-             print("O grafo não possui um caminho euleriano válido.")
-       else:
-          print("O grafo não é euleriano.")
-   
-
-    
-
-
+        if self.ehEuleriano():
+            caminho = self.fleury()
+            if caminho:
+                print("Caminho Euleriano encontrado:")
+                caminho_formatado = [caminho[0][0]]  # Adiciona o vértice inicial
+                for aresta in caminho:
+                    caminho_formatado.append(aresta[1])  # Adiciona o segundo vértice de cada aresta
+                print("Caminho Euleriano:", " -> ".join(caminho_formatado))
+            else:
+                print("O grafo não possui um caminho euleriano válido.")
+        else:
+            print("O grafo não é euleriano.")
 
 
 
