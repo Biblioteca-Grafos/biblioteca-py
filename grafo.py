@@ -445,15 +445,14 @@ class Grafo:
         return False
 
       print("O grafo é Euleriano.")
-      self.verificado_euleriano = True
       return True
       
 
     def fleury(self):
-     caminho = []
-     grafo_temp = self.grafo.copy()
+        caminho = []
+        grafo_temp = self.grafo.copy()
        
-     def podeRemoverAresta(u, v):
+        def podeRemoverAresta(u, v):
             if len(grafo_temp[u]) == 1:
                 return True
 
@@ -473,14 +472,14 @@ class Grafo:
             dfs(u, grafo_simulado, visitados)
 
         
-     vertice_inicial = next((v for v in self.grafo if self.grafo[v]), None)
-     if not vertice_inicial:
-        print("Não há arestas no grafo.")
-        return []
+        vertice_inicial = next((v for v in self.grafo if self.grafo[v]), None)
+        if not vertice_inicial:
+            print("Não há arestas no grafo.")
+            return []
 
-     while any(self.grafo[vertice] for vertice in self.grafo):  # Enquanto houver arestas
-        encontrou_aresta = False
-        print(f"Estado atual do grafo antes da remoção de aresta: {grafo_temp}")  # Verificando o grafo antes da remoção
+        while any(self.grafo[vertice] for vertice in self.grafo):  # Enquanto houver arestas
+            encontrou_aresta = False
+            print(f"Estado atual do grafo antes da remoção de aresta: {grafo_temp}")  # Verificando o grafo antes da remoção
         for vizinho, _ in self.grafo[vertice_inicial]:
             if podeRemoverAresta(vertice_inicial, vizinho):
                 caminho.append((vertice_inicial, vizinho))  # Adiciona a aresta ao caminho
@@ -496,12 +495,12 @@ class Grafo:
                 vertice_inicial = vizinho  # Atualiza o vértice inicial para o próximo vértice
                 encontrou_aresta = True
                 break
-        if not encontrou_aresta:
-            print("Nenhuma aresta válida encontrada. Isso não deveria acontecer!")
-            break
+            if not encontrou_aresta:
+                print("Nenhuma aresta válida encontrada. Isso não deveria acontecer!")
+                break
 
         
-     return caminho
+        return caminho
 
     def exibirCaminhoEulerianoDFS(self):
        if self.verificarSeEulerianoDFS():
