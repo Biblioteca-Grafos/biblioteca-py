@@ -16,35 +16,48 @@ class Grafo:
             self.adicionarVertice(vertice)
 
     def criarGrafoAleatorio(self, minVertices, maxVertices, minArcos, maxArcos):
+
         numVertices = random.randint(minVertices, maxVertices)
-        
-        #n = n*(n-1)/2 maximo de arestas de um grafo completo
         maxArcoPossivel = numVertices * (numVertices - 1) // 2
-        numArestas = random.randint(minArcos, min(maxArcos, maxArcoPossivel))
+        
+        if minArcos > maxArcoPossivel:
+            numArestas = maxArcoPossivel
+        else:
+            numArestas = random.randint(minArcos, min(maxArcos, maxArcoPossivel))
 
         print(f"Gerando grafo com {numVertices} vértices e {numArestas} arestas.")
         
+        # Cria o grafo vazio
         self.criarGrafo(numVertices)
 
         listVertices = list(self.grafo.keys())
+        
+        if numArestas < numVertices - 1:
 
-        # Para garantir que é conexo, o codigo liga todos os vertices primeiro como uma arvore
-        for i in range(len(listVertices) - 1):
-            self.adicionaArcoNaoDirigido(listVertices[i], listVertices[i + 1])
+            arestasCriadas = 0
+            while arestasCriadas < numArestas:
+                a, b = random.sample(listVertices, 2)
+                if self.adicionaArcoNaoDirigido(a, b):
+                    arestasCriadas += 1
+        else:
+            #Arvore geradora se possivel
+            for i in range(numVertices - 1):
+                self.adicionaArcoNaoDirigido(listVertices[i], listVertices[i + 1])
+            
+            arestasRestantes = numArestas - (numVertices - 1)
         
-        arestasRestantes = numArestas - (numVertices - 1)
-        
-        # Agora adiciona as arestas que sobrarem no grafo.
-        arestasCriadas = 0
-        while arestasCriadas < arestasRestantes:
-            a, b = random.sample(listVertices, 2)
-            if self.adicionaArcoNaoDirigido(a, b):
-                arestasCriadas += 1
+            arestasCriadas = 0
+
+            while arestasCriadas < arestasRestantes:
+                a, b = random.sample(listVertices, 2)
+                if self.adicionaArcoNaoDirigido(a, b):  
+                    arestasCriadas += 1
+
+        print(f"Total de arestas criadas: {arestasCriadas}")
 
 
     def criarGrafoReverso(self):
         grafo_reverso = Grafo()
-
 
         for vertice in self.grafo:
             grafo_reverso.adicionarVertice(vertice)
@@ -53,15 +66,13 @@ class Grafo:
                 grafo_reverso.ponderarERotularVertice(vertice, self.vertices[vertice], self.rotulos.get(vertice, ""))
             print(f"Vértice {vertice} adicionado ao grafo reverso.")
 
+
         for vertice in self.grafo:
-            if self.grafo[vertice]:  # Verifica se o vértice tem vizinhos
-                for vizinho in self.grafo[vertice]:
-                    if vizinho and vizinho != "" and vizinho in self.grafo:  # Verifica se o vizinho não é vazio ou inválido
-                        print(f"Adicionando aresta reversa de {vizinho} para {vertice}")
-                        grafo_reverso.adicionaArcoDirigido(vizinho, vertice)
-                        # grafo_reverso.ponderarERotularAresta(vizinho, vertice, peso, self.rotulosArestas.get((vertice, vizinho), ""))
-                    else:
-                        print(f"Vizinho inválido ou vazio: {vizinho}")
+            for vizinho, peso in self.grafo[vertice]:
+
+                print(f"Adicionando aresta reversa de {vizinho} para {vertice} com peso {peso}")
+                grafo_reverso.adicionaArcoDirigido(vizinho, vertice)
+                grafo_reverso.ponderarERotularAresta(vizinho, vertice, peso, self.rotulosArestas.get((vertice, vizinho), ""))
         
         return grafo_reverso
 
@@ -69,6 +80,7 @@ class Grafo:
         if vertice not in self.grafo:
             self.grafo[vertice] = []
             return True
+        print("vertice ja pertencente")
         return False
 
     def adicionaArcoNaoDirigido(self, a, b, peso=1):
@@ -224,13 +236,11 @@ class Grafo:
         return True
 
 ########Verificar Conectividade
-    def busca_em_profundidade(self, vertice, visitados, componente=None):
+    def busca_em_profundidade(self, vertice, visitados, componente = None):
         visitados.add(vertice)
         if componente is not None:
             componente.append(vertice)
-        for v, _ in self.grafo.get(vertice, []):
-            if v not in self.grafo:  # Verifica se v é válido
-                continue
+        for v, _ in self.grafo.get(vertice, []):  # Adiciona a verificação para grafo.get
             if v not in visitados:
                 self.busca_em_profundidade(v, visitados, componente)
 
@@ -318,8 +328,6 @@ class Grafo:
     def _dfs_ordenar(self, vertice, visitados, stack):
         visitados.add(vertice)
         for v, _ in self.grafo.get(vertice, []):
-            if v not in self.grafo:
-                continue
             if v not in visitados:
                 self._dfs_ordenar(v, visitados, stack)
         stack.append(vertice)
@@ -478,7 +486,7 @@ class Grafo:
         if not vertice_inicial:
             print("Não há arestas no grafo.")
             return []
-
+        print("Fleury")
         while any(grafo_temp[vertice] for vertice in grafo_temp):  # Enquanto houver arestas
             encontrou_aresta = False
             for vizinho, _ in grafo_temp[vertice_inicial]:
@@ -499,7 +507,6 @@ class Grafo:
                     break
             
             if not encontrou_aresta:
-                print("Nenhuma aresta válida encontrada.")
                 break
 
         return caminho

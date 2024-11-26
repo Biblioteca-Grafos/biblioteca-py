@@ -4,73 +4,134 @@ from grafo import *
 
 class Main:
     def __init__(self):
+        def testeCriarGrafo():
+            print("\n--- Teste criarGrafo ---")
+            grafo = Grafo()
+            grafo.criarGrafo(5)
+            grafo.mostrarVertices()
+            if len(grafo.grafo) == 5:
+                print("Teste passou.")
+            else:
+                print("Teste falhou.")
 
-        # Criação de um grafo
-        self.grafo = Grafo()
+        def testeAdicionarVertice():
+            print("\n--- Teste adicionarVertice ---")
+            grafo = Grafo()
+            if grafo.adicionarVertice("V1") and "V1" in grafo.grafo:
+                print("Teste passou.")
+            else:
+                print("Teste falhou.")
 
-        #teste criação do grafo
-        self.grafo.criarGrafo(3)  # Criar grafo com 3 vértices
+        def testeAdicionarArestaNaoDirigida():
+            print("\n--- Teste adicionaArcoNaoDirigido ---")
+            grafo = Grafo()
+            grafo.criarGrafo(2)
+            if grafo.adicionaArcoNaoDirigido("V1", "V2"):
+                grafo.mostrarListaAdjacencia()
+                print("Teste passou.")
+            else:
+                print("Teste falhou.")
 
-        #teste grafo aleatório
-        #self.grafo.criarGrafoAleatorio(3, 10, 2, 10)
-        #print("breakpoint ...................................")
-        #teste adicionar arestas
-        self.grafo.adicionaArcoNaoDirigido("V1", "V2")
-        self.grafo.kosaraju()
-        #self.grafo.adicionaArcoNaoDirigido("V4", "V5", 3)
-        #self.grafo.adicionaArcoNaoDirigido("V5", "V1", 3)
-        #self.grafo.adicionaArcoDirigido("V4", "V5")
+        def testeAdicionarArestaDirigida():
+            print("\n--- Teste adicionaArcoDirigido ---")
+            grafo = Grafo()
+            grafo.criarGrafo(2)
+            if grafo.adicionaArcoDirigido("V1", "V2"):
+                grafo.mostrarListaAdjacencia()
+                print("Teste passou.")
+            else:
+                print("Teste falhou.")
 
-        #teste ponderação e rotulação de vértices
-        #self.grafo.ponderarERotularVertice("V1", 10, "A1")
-        #self.grafo.ponderarERotularVertice("V2", 15, "A2")
+        def testePonderarRotularVertice():
+            print("\n--- Teste ponderarERotularVertice ---")
+            grafo = Grafo()
+            grafo.criarGrafo(1)
+            if grafo.ponderarERotularVertice("V1", 10, "Inicial"):
+                print("Teste passou.")
+            else:
+                print("Teste falhou.")
 
-        #teste ponderação e rotulação de arestas
-        #self.grafo.ponderarERotularAresta("V1", "V2", 7, "R1")
+        def testePonderarRotularAresta():
+            print("\n--- Teste ponderarERotularAresta ---")
+            grafo = Grafo()
+            grafo.criarGrafo(2)
+            grafo.adicionaArcoNaoDirigido("V1", "V2")
+            if grafo.ponderarERotularAresta("V1", "V2", 5, "Aresta 1"):
+                print("Teste passou.")
+            else:
+                print("Teste falhou.")
 
-        #teste remoção de arco
-        #self.grafo.removeArco("V1", "V2")
+        def testeRemoverAresta():
+            print("\n--- Teste removeArco ---")
+            grafo = Grafo()
+            grafo.criarGrafo(2)
+            grafo.adicionaArcoNaoDirigido("V1", "V2")
+            grafo.removeArco("V1", "V2")
+            if not grafo.existeAresta("V1", "V2"):
+                print("Teste passou.")
+            else:
+                print("Teste falhou.")
 
-        #teste verificar a existência de uma aresta
-        #self.grafo.existeAresta("V1", "V2")
+        def testeConectividadeSimples():
+            print("\n--- Teste checarConectividadeSimples ---")
+            grafo = Grafo()
+            grafo.criarGrafo(3)
+            grafo.adicionaArcoNaoDirigido("V1", "V2")
+            grafo.adicionaArcoNaoDirigido("V2", "V3")
+            if grafo.checarConectividadeSimples():
+                print("Teste passou.")
+            else:
+                print("Teste falhou.")
 
-        #teste exibindo o grafo em diferentes representações
-        # self.grafo.mostrarVertices()
-        # self.grafo.mostrarListaAdjacencia()
-        # self.grafo.mostrarMatrizAdjacencia()
-        # self.grafo.mostrarMatrizIncidencia()
+        def testeConectividadeFortemente():
+            print("\n--- Teste checarConectividadeFortemente ---")
+            grafo = Grafo()
+            grafo.criarGrafo(3)
+            grafo.adicionaArcoDirigido("V1", "V2")
+            grafo.adicionaArcoDirigido("V2", "V3")
+            grafo.adicionaArcoDirigido("V3", "V1")
+            if grafo.checarConectividadeFortemente():
+                print("Teste passou.")
+            else:
+                print("Teste falhou.")
 
-        #teste verificando se o grafo é vazio
-        #self.grafo.ehVazio()
+        def testeKosaraju():
+            print("\n--- Teste Kosaraju ---")
+            grafo = Grafo()
+            grafo.criarGrafo(3)
+            grafo.adicionaArcoDirigido("V1", "V2")
+            grafo.adicionaArcoDirigido("V2", "V3")
+            grafo.adicionaArcoDirigido("V3", "V1")
+            componentes = grafo.kosaraju()
+            print(f"Componentes Fortemente Conexos: {componentes}")
+            if len(componentes) == 1:
+                print("Teste passou.")
+            else:
+                print("Teste falhou.")
 
-        #teste verificando se o grafo é completo
-        #self.grafo.ehCompleto()
 
-        #teste verificando conectividade simples
-        #self.grafo.checarConectividadeSimples()
+        def testeEuleriano():
+            print("\n Teste grafo euleriano")
+            grafo = Grafo()
+            grafo.criarGrafoAleatorio(11,109,111,122)
+            grafo.exibirCaminhoEulerianoDFS()
+            grafo.exportarParaGraphML("teste.GRAPHML")
 
-        #teste verificando conectividade semifortemente
-        #self.grafo.checarConectividadeSemifortemente()
 
-        #teste verificando conectividade fortemente
-        #self.grafo.checarConectividadeFortemente()
+        # # Executando todos os testes
+        # testeCriarGrafo()
+        # testeAdicionarVertice()
+        # testeAdicionarArestaNaoDirigida()
+        # testeAdicionarArestaDirigida()
+        # testePonderarRotularVertice()
+        # testePonderarRotularAresta()
+        # testeRemoverAresta()
+        # testeConectividadeSimples()
+        # testeConectividadeFortemente()
+        # testeKosaraju()
+        # self.grafo.exportarParaGraphML("grafo2.GRAPHML")
+        # testeEuleriano()
 
-        # self.grafo = Grafo()
-        # self.grafo.criarGrafo(3)
-        # self.grafo.adicionaArcoNaoDirigido("V1", "V2", 5)
-        # self.grafo.adicionaArcoNaoDirigido("V2", "V3", 3)
-        # self.grafo.ponderarERotularAresta("V1", "V2", 7, "R1")
-        # self.grafo.ponderarERotularVertice("V1", 10, "A1")
-        # self.grafo.ponderarERotularVertice("V2", 11, "A3")
 
-        # self.grafo=Grafo()
-        # self.grafo.criarGrafoAleatorio(9,9,36,47)
-        #self.grafo.metodo_tarjan_direcionado()
-        #self.grafo.verificarPontes()
-        # self.grafo.exibirCaminhoEulerianoDFS()
-        # self.grafo.kosaraju()
-       
-        self.grafo.exportarParaGraphML("grafo2.GRAPHML")
 if __name__ == "__main__":
     main = Main()
-
