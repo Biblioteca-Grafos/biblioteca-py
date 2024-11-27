@@ -238,7 +238,7 @@ class Main:
                         componentes = grafo.kosaraju()
                         print("Componentes fortemente conexos:", componentes)
                     elif funcionalidade == "15":
-                        grafo.encontrarPonteEArticulacao()
+                        grafo.encontrarPonteEArticulacao(ehDirecionado)
                     elif funcionalidade == "16":
                         grafo.verificarPontes()
                     elif funcionalidade == "17":

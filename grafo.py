@@ -337,7 +337,6 @@ class Grafo:
                 componente = []
                 grafo_reverso.busca_em_profundidade(vertice, visitados, componente)
                 componentes.append(componente)
-        print(f"Componentes Fortementes Conexos {componentes}")
         
         return componentes
 
@@ -348,23 +347,42 @@ class Grafo:
                 self._dfs_ordenar(v, visitados, stack)
         stack.append(vertice)
 
-    def _dfs(self, u, visitados, discovery_time, low, parent, articulacoes, pontes, time):
+    def _dfs(self, u, visitados, discovery_time, low, parent, articulacoes, pontes, time, direcionado):
         visitados[u] = True
         discovery_time[u] = low[u] = time
         time += 1
-        for v in self.grafo[u]:
+
+        filhos = 0  # Contador de filhos do vértice u
+        for v, peso in self.grafo[u]:
             if not visitados[v]:
                 parent[v] = u
-                self._dfs(v, visitados, discovery_time, low, parent, articulacoes, pontes, time)
+                filhos += 1
+                self._dfs(v, visitados, discovery_time, low, parent, articulacoes, pontes, time, direcionado)
                 low[u] = min(low[u], low[v])
+
+                # Verifica se (u, v) é uma ponte
                 if low[v] > discovery_time[u]:
                     pontes.append((u, v))
-                if parent[u] == -1 and len([n for n in self.grafo[u] if not visitados[n]]) > 1:
-                    articulacoes.append(u)
+
+                # Para grafos direcionados, ajusta a lógica de articulações
+                if direcionado:
+                    if parent[u] is not None and low[v] > discovery_time[u]:
+                        articulacoes.add(u)
+                else:
+                    # Para grafos não direcionados, considera a raiz como caso especial
+                    if parent[u] is None and filhos > 1:
+                        articulacoes.add(u)
+                    elif parent[u] is not None and low[v] >= discovery_time[u]:
+                        articulacoes.add(u)
             elif v != parent[u]:
                 low[u] = min(low[u], discovery_time[v])
 
-    def encontrarPonteEArticulacao(self):
+        # Em grafos direcionados, a raiz não pode ser articulação
+        if direcionado and parent[u] is None and filhos <= 1:
+            articulacoes.discard(u)
+
+
+    def encontrarPonteEArticulacao(self, direcionado=False):
         visitados = {u: False for u in self.grafo}
         discovery_time = {u: -1 for u in self.grafo}
         low = {u: -1 for u in self.grafo}
@@ -375,11 +393,13 @@ class Grafo:
         time = 0
         for u in self.grafo:
             if not visitados[u]:
-                self._dfs(u, visitados, discovery_time, low, parent, articulacoes, pontes, time)
+                self._dfs(u, visitados, discovery_time, low, parent, articulacoes, pontes, time, direcionado)
 
-        print(f"Vértices de articulação: {articulacoes}")
+        # Exibe as articulações ou um vetor vazio se não houver articulações
+        print(f"Vértices de articulação: {sorted(list(articulacoes)) if articulacoes else []}")
         print(f"Pontes: {pontes}")
         return articulacoes, pontes
+
     
     def _dfs_tarjan(self, u, visitados, discovery_time, low, parent, pontes, time):
         visitados[u] = True
