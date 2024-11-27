@@ -744,6 +744,10 @@ class Grafo:
             
             if graph is None:
                 raise ValueError("O elemento <graph> não foi encontrado no arquivo GraphML.")
+            
+            edgedefault = graph.get("edgedefault", "directed")  # Default é direcionado
+            direcionado = edgedefault == "directed"
+            print(f"Tipo de grafo detectado: {'Direcionado' if direcionado else 'Não Direcionado'}")
 
             # Adiciona os nós
             for node in graph.findall("{http://graphml.graphdrawing.org/xmlns}node"):
@@ -756,7 +760,10 @@ class Grafo:
                 source = edge.get('source')
                 target = edge.get('target')
                 print(f"Encontrada aresta: {source} -> {target}")
-                self.adicionaArcoDirigido(source,target)
+                if direcionado:
+                    self.adicionaArcoDirigido(source, target)
+                else:
+                    self.adicionaArcoNaoDirigido(source, target)
 
             print("Importação concluída com sucesso.")
             print(self.grafo)
