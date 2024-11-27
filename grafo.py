@@ -1,5 +1,6 @@
 import random
 import xml.etree.ElementTree as ET
+import time
 
 class Grafo:
     def __init__(self):
@@ -614,6 +615,48 @@ class Grafo:
 
         return False  # O grafo é não-direcionado
 
+    def quantidadeVertices(self):
+        """Retorna a quantidade de vértices no grafo."""
+        print(f"A quantidade de vértices no grafo é de: {len(self.grafo)}")
+        # return len(self.grafo)
+
+    def quantidadeArestas(self):
+        """Retorna a quantidade de arestas no grafo."""
+        print(f"A quantidade de arestas no grafo é de: {len(self.arestas)}")
+        # return len(self.arestas)
+
+    def verificarAdjacenciaEntreArestas(self):
+        """Verifica a adjacência entre todas as arestas do grafo."""
+        print("Verificando adjacência entre as arestas:")
+        for i in range(len(self.arestas)):
+            v1_1, v1_2, peso1 = self.arestas[i]
+            for j in range(i + 1, len(self.arestas)):  # Evitar comparações duplicadas
+                v2_1, v2_2, peso2 = self.arestas[j]
+                
+                # Verifica se as arestas compartilham pelo menos um vértice
+                if (v1_1 == v2_1 or v1_1 == v2_2 or 
+                    v1_2 == v2_1 or v1_2 == v2_2):
+                    print(
+                        f"Aresta ({v1_1} - {v1_2}, peso {peso1}) "
+                        f"está adjacente à aresta ({v2_1} - {v2_2}, peso {peso2})."
+                    )
+                else:
+                    print(
+                        f"Aresta ({v1_1} - {v1_2}, peso {peso1}) "
+                        f"NÃO está adjacente à aresta ({v2_1} - {v2_2}, peso {peso2})."
+                    )
+
+    # Checagem de adjacência
+    def estaoAdjacentes(self, vertice1, vertice2):
+        if vertice1 in self.grafo and vertice2 in self.grafo:
+            return any(v == vertice2 for v, _ in self.grafo[vertice1])
+        return False
+
+    def verificarAdjacencia(self, vertice1, vertice2):
+        if self.estaoAdjacentes(vertice1, vertice2):
+            print(f"{vertice1} e {vertice2} estão adjacentes.")
+        else:
+            print(f"{vertice1} e {vertice2} NÃO estão adjacentes.")
 
 ####Exportaçao
     def exportarParaGraphML(self, arquivo, ehDirecionado):
@@ -670,7 +713,7 @@ class Grafo:
     def importarDeGraphML(self, arquivo):
         from pathlib import Path
         import xml.etree.ElementTree as ET
-        grafo = Grafo()
+        # grafo = Grafo()
 
         print("Iniciando a importação...")
 
@@ -698,14 +741,17 @@ class Grafo:
             for node in graph.findall("{http://graphml.graphdrawing.org/xmlns}node"):
                 node_id = node.get('id')
                 print(f"Encontrado nó: {node_id}")
-                grafo.adicionarVertice(node_id)
+                self.adicionarVertice(node_id)
 
             # Adiciona as arestas
             for edge in graph.findall("{http://graphml.graphdrawing.org/xmlns}edge"):
                 source = edge.get('source')
                 target = edge.get('target')
                 print(f"Encontrada aresta: {source} -> {target}")
-                grafo.adicionaArcoDirigido(source,target)
+                self.adicionaArcoDirigido(source,target)
+
+            print("Importação concluída com sucesso.")
+            print(self.grafo)
 
         except ET.ParseError as e:
             print(f"Erro ao analisar o arquivo XML: {e}")

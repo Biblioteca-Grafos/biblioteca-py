@@ -130,6 +130,7 @@ class Main:
                 print("Escolha uma opção:")
                 print("1. Criar Grafo Aleatório Não Direcionado")
                 print("2. Criar Grafo Linear Direcionado")
+                print("3. Importar Grafo")
                 print("0. Sair")
 
                 opcao = input("> ")
@@ -158,6 +159,11 @@ class Main:
                     grafo = Grafo()
                     grafo.criarGrafoLinearDirecionado(numVertices)
                     grafo.mostrarListaAdjacencia()
+
+                elif opcao == "3":
+                    grafo = Grafo()
+                    grafo.importarDeGraphML("grafo.graphml")
+                    grafo.mostrarListaAdjacencia() 
 
                 elif opcao == "0":
                     print("Saindo do programa.")
@@ -214,17 +220,16 @@ class Main:
                     elif funcionalidade == "6":
                         a = input("Digite o primeiro vértice: ")
                         b = input("Digite o segundo vértice: ")
-                        grafo.existeAresta(a, b)
+                        grafo.verificarAdjacencia(a, b)
                     elif funcionalidade == "7":
-                        a = input("Digite o primeiro vértice: ")
-                        b = input("Digite o segundo vértice: ")
-                        grafo.existeAresta(a, b)
+                        grafo.verificarAdjacenciaEntreArestas()
                     elif funcionalidade == "8":
                         a = input("Digite o primeiro vértice: ")
                         b = input("Digite o segundo vértice: ")
                         grafo.existeAresta(a, b)
                     elif funcionalidade == "9":
-                        grafo.checarQuantidadeVerticesArestas()
+                        grafo.quantidadeVertices()
+                        grafo.quantidadeArestas()
                     elif funcionalidade == "10":
                         grafo.ehVazio()
                         grafo.ehCompleto()
