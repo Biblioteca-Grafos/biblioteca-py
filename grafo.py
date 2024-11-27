@@ -549,7 +549,10 @@ class Grafo:
 
     def exibirCaminhoEulerianoDFS(self):
         if self.ehEuleriano():
+            start_time = time.time()
             caminho = self.fleury()
+            end_time = time.time()
+            print(f"Tempo de execução: {end_time - start_time} segundos")
             if caminho:
                 print("Caminho Euleriano encontrado:")
                 caminho_formatado = [caminho[0][0]]  # Adiciona o vértice inicial
