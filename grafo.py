@@ -55,6 +55,45 @@ class Grafo:
 
         print(f"Total de arestas criadas: {arestasCriadas}")
 
+    def criarGrafoAleatorioDirigido(self, minVertices, maxVertices, minArcos, maxArcos):
+        numVertices = random.randint(minVertices, maxVertices)
+        maxArcoPossivel = numVertices * (numVertices - 1) // 2
+        
+        if minArcos > maxArcoPossivel:
+            numArestas = maxArcoPossivel
+        else:
+            numArestas = random.randint(minArcos, min(maxArcos, maxArcoPossivel))
+
+        print(f"Gerando grafo com {numVertices} vértices e {numArestas} arestas.")
+        
+        # Cria o grafo vazio
+        self.criarGrafo(numVertices)
+
+        listVertices = list(self.grafo.keys())
+        
+        if numArestas < numVertices - 1:
+
+            arestasCriadas = 0
+            while arestasCriadas < numArestas:
+                a, b = random.sample(listVertices, 2)
+                if self.adicionaArcoDirigido(a, b):
+                    arestasCriadas += 1
+        else:
+            #Arvore geradora se possivel
+            for i in range(numVertices - 1):
+                self.adicionaArcoDirigido(listVertices[i], listVertices[i + 1])
+            
+            arestasRestantes = numArestas - (numVertices - 1)
+        
+            arestasCriadas = 0
+
+            while arestasCriadas < arestasRestantes:
+                a, b = random.sample(listVertices, 2)
+                if self.adicionaArcoDirigido(a, b):  
+                    arestasCriadas += 1
+
+        print(f"Total de arestas criadas: {arestasCriadas}")
+
     def criarGrafoLinearDirecionado(self, numVertices):
         self.criarGrafo(numVertices)
         listVertices = list(self.grafo.keys())
@@ -562,10 +601,15 @@ class Grafo:
             print("O grafo não é euleriano.")
 
 
+    def ehDirecionado(self):
+        for vertice in self.grafo:
+            for vizinho, peso in self.grafo[vertice]:
+                # Verifica se a aresta oposta (b -> a) existe e tem o mesmo peso
+                if (vertice, peso) not in [(v, p) for v, p in self.grafo[vizinho]]:
+                    
+                    return True  # O grafo é direcionado
 
-
-
-
+        return False  # O grafo é não-direcionado
 
 
 ####Exportaçao
@@ -587,9 +631,11 @@ class Grafo:
         for key in keys:
             ET.SubElement(graphml, "key", id=key["id"], for_=key["for"], 
                         attr_name=key["attr.name"], attr_type=key["attr.type"])
-        
-        tipo_grafo = "directed" if ehDirecionado else "undirected"
-        graph = ET.SubElement(graphml, "graph", id="G", edgedefault=tipo_grafo)
+            
+        if self.ehDirecionado() and ehDirecionado:
+            graph = ET.SubElement(graphml, "graph", id="G", edgedefault="directed")
+        else:
+            graph = ET.SubElement(graphml, "graph", id="G", edgedefault="undirected")
         
 
         for vertice in self.grafo:
@@ -616,3 +662,51 @@ class Grafo:
         tree = ET.ElementTree(graphml)
         tree.write(arquivo)
         print(f"Grafo exportado para {arquivo}")
+
+###Importação
+    def importarDeGraphML(self, arquivo):
+        from pathlib import Path
+        import xml.etree.ElementTree as ET
+        grafo = Grafo()
+
+        print("Iniciando a importação...")
+
+        caminho = Path(arquivo)
+        if not caminho.is_file():
+            raise FileNotFoundError(f"O arquivo especificado não existe: {caminho}")
+
+        print(f"Arquivo localizado: {caminho}")
+
+        try:
+            tree = ET.parse(arquivo)
+            root = tree.getroot()
+            print("Arquivo XML carregado com sucesso.")
+
+            # Aqui você pode verificar o conteúdo da raiz para debug
+            print(f"Root tag: {root.tag}")
+
+            # Encontrar o elemento <graph> e processar nós e arestas
+            graph = root.find("{http://graphml.graphdrawing.org/xmlns}graph")
+            
+            if graph is None:
+                raise ValueError("O elemento <graph> não foi encontrado no arquivo GraphML.")
+
+            # Adiciona os nós
+            for node in graph.findall("{http://graphml.graphdrawing.org/xmlns}node"):
+                node_id = node.get('id')
+                print(f"Encontrado nó: {node_id}")
+                grafo.adicionarVertice(node_id)
+
+            # Adiciona as arestas
+            for edge in graph.findall("{http://graphml.graphdrawing.org/xmlns}edge"):
+                source = edge.get('source')
+                target = edge.get('target')
+                print(f"Encontrada aresta: {source} -> {target}")
+                grafo.adicionaArcoDirigido(source,target)
+
+        except ET.ParseError as e:
+            print(f"Erro ao analisar o arquivo XML: {e}")
+            raise
+        except Exception as e:
+            print(f"Erro inesperado: {e}")
+            raise
