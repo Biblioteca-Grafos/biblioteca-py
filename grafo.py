@@ -709,6 +709,14 @@ class Grafo:
         tree.write(arquivo)
         print(f"Grafo exportado para {arquivo}")
 
+    ###Checar quantidade de Vértices e Arestas
+    def checarQuantidadeVerticesArestas(self):
+        num_vertices = len(self.grafo)  # conta o número de vértices
+        num_arestas = len(self.arestas)  # conta o número de arestas
+        print(f"Quantidade de vértices: {num_vertices}")
+        print(f"Quantidade de arestas: {num_arestas}")
+        return num_vertices, num_arestas
+        
 ###Importação
     def importarDeGraphML(self, arquivo):
         from pathlib import Path
