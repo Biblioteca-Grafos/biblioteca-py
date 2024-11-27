@@ -1,45 +1,45 @@
-from grafo import *
-from grafoFuncoes import *
-import networkx as nx
-import os
+# from grafo import *
+# from grafoFuncoes import *
+# import networkx as nx
+# import os
 
 
-def exportarGrafoParaGraphML(grafoNDir, nome_arquivo=r'..\Desktop\Grafo_Trabalho\biblioteca-py\exportar_grafo\grafo.graphml'):
-    #COLOCAR O DIRETÓRIO DO COMPUTADOR ESPECÍFICO PARA QUE FUNCIONE
+# def exportarGrafoParaGraphML(grafoNDir, nome_arquivo=r'..\Desktop\Grafo_Trabalho\biblioteca-py\exportar_grafo\grafo.graphml'):
+#     #COLOCAR O DIRETÓRIO DO COMPUTADOR ESPECÍFICO PARA QUE FUNCIONE
     
-    # Garantir que o diretório de destino existe
-    diretorio = os.path.dirname(nome_arquivo)
-    if not os.path.exists(diretorio):
-        os.makedirs(diretorio)
+#     # Garantir que o diretório de destino existe
+#     diretorio = os.path.dirname(nome_arquivo)
+#     if not os.path.exists(diretorio):
+#         os.makedirs(diretorio)
     
-    G = nx.Graph()  # Para grafo não direcionado
-    # G = nx.DiGraph()  # Para grafo direcionado
+#     G = nx.Graph()  # Para grafo não direcionado
+#     # G = nx.DiGraph()  # Para grafo direcionado
     
-    # Adicionando vértices e arestas ao grafo do NetworkX
-    for v1, arestas in grafoNDir.grafo.items():
-        G.add_node(v1)
-        for v2, peso in arestas:
-            G.add_edge(v1, v2, weight=peso)
+#     # Adicionando vértices e arestas ao grafo do NetworkX
+#     for v1, arestas in grafoNDir.grafo.items():
+#         G.add_node(v1)
+#         for v2, peso in arestas:
+#             G.add_edge(v1, v2, weight=peso)
 
-    # Exportando para o formato GraphML
-    nx.write_graphml(G, nome_arquivo)
-    print(f"Grafo exportado para {nome_arquivo}")
+#     # Exportando para o formato GraphML
+#     nx.write_graphml(G, nome_arquivo)
+#     print(f"Grafo exportado para {nome_arquivo}")
 
-###Script principal
+# ###Script principal
 # print("")
 # print("ESSA É A BIBLIOTECA DE MANIPULAÇÃO DE GRAFOS")
 # print("")
-#grafo = GrafoNaoDirecionado()
-#criarGrafoNDirecionado(grafo)
-#grafo.mostrarMatrizIncidencia()
+# grafo = GrafoNaoDirecionado()
+# criarGrafoNDirecionado(grafo)
+# grafo.mostrarMatrizIncidencia()
 
 
 
-####Scripts para testar funcoes
+# ####Scripts para testar funcoes
 
 # print("________________________________")
 # print("Aqui começa o grafo não direcionado\n")
-#grafoNDir = GrafoNaoDirecionado()
+# grafoNDir = GrafoNaoDirecionado()
 # grafoNDir.adicionarVertice("A")
 # grafoNDir.adicionarVertice("B")
 # grafoNDir.adicionarVertice("C")
@@ -70,7 +70,7 @@ def exportarGrafoParaGraphML(grafoNDir, nome_arquivo=r'..\Desktop\Grafo_Trabalho
 # grafoNDir.quantidadeArestas()
 # grafoNDir.checarGrafoCompleto()
 
-#Exemplo para criar um grafo direcionado
+# # Exemplo para criar um grafo direcionado
 # grafoDir = GrafoDirecionado()
 # criarGrafoDirecionado(grafoDir)
 # grafoDir.adicionarVertice("A")
@@ -93,7 +93,7 @@ def exportarGrafoParaGraphML(grafoNDir, nome_arquivo=r'..\Desktop\Grafo_Trabalho
 # grafoDir.quantidadeVertices()
 # grafoDir.quantidadeArestas()
 
-#exportarGrafoParaGraphML(grafoDir)
+# exportarGrafoParaGraphML(grafoDir)
 
 # print("Aqui começa o grafo direcionado");
 # grafoDir = GrafoDirecionado();

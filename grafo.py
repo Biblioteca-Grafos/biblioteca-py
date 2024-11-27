@@ -55,6 +55,14 @@ class Grafo:
 
         print(f"Total de arestas criadas: {arestasCriadas}")
 
+    def criarGrafoLinearDirecionado(self, numVertices):
+        self.criarGrafo(numVertices)
+        listVertices = list(self.grafo.keys())
+        for i in range(numVertices - 1):
+            self.adicionaArcoDirigido(listVertices[i], listVertices[i + 1])
+
+        print(f"Grafo linear direcionado criado com {numVertices} vértices e {numVertices - 1} arestas")
+
 
     def criarGrafoReverso(self):
         grafo_reverso = Grafo()
@@ -67,7 +75,7 @@ class Grafo:
             print(f"Vértice {vertice} adicionado ao grafo reverso.")
 
         for vertice in self.grafo:
-            for vizinho in self.grafo[vertice]:
+            for vizinho, peso in self.grafo[vertice]:
 
                 print(f"Adicionando aresta reversa de {vizinho} para {vertice}")
                 grafo_reverso.adicionaArcoDirigido(vizinho, vertice)
@@ -98,9 +106,9 @@ class Grafo:
 
     def adicionaArcoDirigido(self, a, b, peso=1):
         if a in self.grafo and b in self.grafo:
-            self.grafo[a].append(b)
+            self.grafo[a].append((b, peso))
             self.arestas.append((a, b, peso))
-            print(f"Arco de {a} ---> {b} adicionado")
+            print(f"Arco {a} --- {b} adicionado com peso {peso}")
             return True
         print("falha ao adicionar Arco")
         return False
@@ -158,11 +166,17 @@ class Grafo:
 
     def mostrarListaAdjacencia(self):
         print("Representando Grafo com Lista de Adjacência")
-        print(self.arestas)
         for vertice, adjacentes in self.grafo.items():
-            adjacencias = [f"{vizinho}({peso})" for vizinho, peso in adjacentes]
+            adjacencias = []
+            for item in adjacentes:
+                if isinstance(item, tuple):  # Caso tenha peso
+                    vizinho, peso = item
+                    adjacencias.append(f"{vizinho}({peso})")
+                else:  # Caso não tenha peso
+                    adjacencias.append(f"{item}")
             print(f"{vertice} -> {' '.join(adjacencias)}")
         print("Fim representando Grafo com Lista de Adjacência\n")
+
 
     def mostrarMatrizAdjacencia(self):
         listaVertices = list(self.grafo.keys())
@@ -241,7 +255,7 @@ class Grafo:
         visitados.add(vertice)
         if componente is not None:
             componente.append(vertice)
-        for v in self.grafo.get(vertice):  # Adiciona a verificação para grafo.get
+        for v, _ in self.grafo.get(vertice, []):  # Adiciona a verificação para grafo.get
             if v not in visitados:
                 self.busca_em_profundidade(v, visitados, componente)
 
@@ -323,12 +337,13 @@ class Grafo:
                 componente = []
                 grafo_reverso.busca_em_profundidade(vertice, visitados, componente)
                 componentes.append(componente)
+        print(f"Componentes Fortementes Conexos {componentes}")
         
         return componentes
 
     def _dfs_ordenar(self, vertice, visitados, stack):
         visitados.add(vertice)
-        for v in self.grafo.get(vertice):
+        for v, _ in self.grafo.get(vertice, []):
             if v not in visitados:
                 self._dfs_ordenar(v, visitados, stack)
         stack.append(vertice)
@@ -534,7 +549,7 @@ class Grafo:
 
 
 ####Exportaçao
-    def exportarParaGraphML(self, arquivo):
+    def exportarParaGraphML(self, arquivo, ehDirecionado):
         import xml.etree.ElementTree as ET
 
         # Raiz do arquivo GraphML
@@ -553,7 +568,8 @@ class Grafo:
             ET.SubElement(graphml, "key", id=key["id"], for_=key["for"], 
                         attr_name=key["attr.name"], attr_type=key["attr.type"])
         
-        graph = ET.SubElement(graphml, "graph", id="G", edgedefault="undirected")
+        tipo_grafo = "directed" if ehDirecionado else "undirected"
+        graph = ET.SubElement(graphml, "graph", id="G", edgedefault=tipo_grafo)
         
 
         for vertice in self.grafo:

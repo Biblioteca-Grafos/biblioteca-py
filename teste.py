@@ -121,6 +121,137 @@ class Main:
             grafo.exibirCaminhoEulerianoDFS()
             grafo.exportarParaGraphML("teste.GRAPHML")
 
+        def menu():
+            print("Bem-vindo ao sistema de criação de grafos!")
+
+            while True:
+                print("\n______________________________________________________")
+                print("Menu Inicial")
+                print("Escolha uma opção:")
+                print("1. Criar Grafo Aleatório Não Direcionado")
+                print("2. Criar Grafo Linear Direcionado")
+                print("0. Sair")
+
+                opcao = input("> ")
+
+                if opcao == "1":
+                    # Criar grafo aleatório não direcionado
+                    print("Defina o número de vértices:")
+                    vertices = int(input("> "))
+                    print("Defina o número mínimo de arestas:")
+                    minArestas = int(input("> "))
+                    print("Defina o número máximo de arestas:")
+                    maxArestas = int(input("> "))
+                    
+                    ehDirecionado = False
+
+                    grafo = Grafo()
+                    grafo.criarGrafoAleatorio(vertices, vertices, minArestas, maxArestas)
+                    grafo.mostrarListaAdjacencia()
+
+                elif opcao == "2":
+                    # Criar grafo linear direcionado
+                    print("Defina o número de vértices para o grafo linear direcionado:")
+                    numVertices = int(input("> "))
+                    ehDirecionado = True
+
+                    grafo = Grafo()
+                    grafo.criarGrafoLinearDirecionado(numVertices)
+                    grafo.mostrarListaAdjacencia()
+
+                elif opcao == "0":
+                    print("Saindo do programa.")
+                    break
+
+                else:
+                    print("Opção inválida. Tente novamente.")
+
+                # Submenu de funcionalidades para o grafo criado
+                while True:
+                    print("\n______________________________________________________")
+                    print("Menu de funcionalidades")
+                    print("Escolha uma opção:")
+                    print("1. Ver Matriz de Adjacência")
+                    print("2. Ver Matriz de Incidência")
+                    print("3. Ver Lista de Adjacência")
+                    print("4. Ponderar vértice")
+                    print("5. Ponderar aresta")
+                    print("6. Checagem de adjacência entre vértices")
+                    print("7. Checagem de adjacência entre arestas")
+                    print("8. Checagem da existência de arestas")
+                    print("9. Checagem da quantidade de vértices e arestas")
+                    print("10. Checagem de grafo vazio e completo")
+                    print("11. Verificar se é simplesmente conexo")
+                    print("12. Verificar se é semifortemente conexo")
+                    print("13. Verificar se é fortemente conexo")
+                    print("14. Kosaraju")
+                    print("15. Checagem de ponte e articulação")
+                    print("16. Naive")
+                    print("17. Tarjan")
+                    print("18. Fleury")
+                    print("19. Exportar")
+                    print("0. Voltar ao Menu Inicial")
+
+                    funcionalidade = input("> ")
+
+                    if funcionalidade == "1":
+                        grafo.mostrarMatrizAdjacencia()
+                    elif funcionalidade == "2":
+                        grafo.mostrarMatrizIncidencia()
+                    elif funcionalidade == "3":
+                        grafo.mostrarListaAdjacencia()
+                    elif funcionalidade == "4":
+                        vertice = input("Digite o vértice para ponderar: ")
+                        valor_ponderacao = float(input("Digite o valor da ponderação: "))
+                        rotulo = input("Digite o rótulo: ")
+                        grafo.ponderarERotularVertice(vertice, valor_ponderacao, rotulo)
+                    elif funcionalidade == "5":
+                        a = input("Digite o primeiro vértice da aresta: ")
+                        b = input("Digite o segundo vértice da aresta: ")
+                        valor_ponderacao = float(input("Digite o valor da ponderação: "))
+                        rotulo = input("Digite o rótulo: ")
+                        grafo.ponderarERotularAresta(a, b, valor_ponderacao, rotulo)
+                    elif funcionalidade == "6":
+                        a = input("Digite o primeiro vértice: ")
+                        b = input("Digite o segundo vértice: ")
+                        grafo.existeAresta(a, b)
+                    elif funcionalidade == "7":
+                        a = input("Digite o primeiro vértice: ")
+                        b = input("Digite o segundo vértice: ")
+                        grafo.existeAresta(a, b)
+                    elif funcionalidade == "8":
+                        a = input("Digite o primeiro vértice: ")
+                        b = input("Digite o segundo vértice: ")
+                        grafo.existeAresta(a, b)
+                    elif funcionalidade == "9":
+                        grafo.checarQuantidadeVerticesArestas()
+                    elif funcionalidade == "10":
+                        grafo.ehVazio()
+                        grafo.ehCompleto()
+                    elif funcionalidade == "11":
+                        grafo.checarConectividadeSimples()
+                    elif funcionalidade == "12":
+                        grafo.checarConectividadeSemifortemente()
+                    elif funcionalidade == "13":
+                        grafo.checarConectividadeFortemente()
+                    elif funcionalidade == "14":
+                        componentes = grafo.kosaraju()
+                        print("Componentes fortemente conexos:", componentes)
+                    elif funcionalidade == "15":
+                        grafo.encontrarPonteEArticulacao()
+                    elif funcionalidade == "16":
+                        grafo.verificarPontes()
+                    elif funcionalidade == "17":
+                        grafo.metodo_tarjan_direcionado()
+                    elif funcionalidade == "18":
+                        grafo.exibirCaminhoEulerianoDFS()
+                    elif funcionalidade == "19":
+                        grafo.exportarParaGraphML("grafo.GRAPHML", ehDirecionado)
+                    elif funcionalidade == "0":
+                        break
+                    else:
+                        print("Opção inválida. Tente novamente.")
+
 
         # # Executando todos os testes
         # testeCriarGrafo()
@@ -133,9 +264,10 @@ class Main:
         # testeConectividadeSimples()
         # testeConectividadeFortemente()
         # testeKosaraju()
-        testeAdicionarArestaDirigida()
+        # testeAdicionarArestaDirigida()
         # testeEuleriano()
-
+        menu()
+        
 
 if __name__ == "__main__":
     main = Main()
