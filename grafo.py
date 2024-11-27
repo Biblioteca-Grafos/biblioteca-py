@@ -1,5 +1,6 @@
 import random
 import xml.etree.ElementTree as ET
+import time
 
 class Grafo:
     def __init__(self):
