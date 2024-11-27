@@ -162,7 +162,8 @@ class Main:
 
                 elif opcao == "3":
                     grafo = Grafo()
-                    grafo.importarDeGraphML("grafo.graphml")
+                    a = input("Digite o nome do arquivo: ")
+                    grafo.importarDeGraphML(a)
                     grafo.mostrarListaAdjacencia() 
 
                 elif opcao == "0":
